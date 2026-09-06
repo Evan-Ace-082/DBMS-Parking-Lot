@@ -1,0 +1,35 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Environment & Secrets
+.env
+.env.local
+
+# Logs & Process IDs
+*.log
+backend.log
+frontend.log
+*.pid
+backend.pid
+frontend.pid
+
+# SQLite Database
+*.sqlite
+*.sqlite3
+*.db
+parking_lot_db.sqlite
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
