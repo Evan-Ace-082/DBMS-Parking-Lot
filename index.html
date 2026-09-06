@@ -15,7 +15,7 @@
     <style>
         :root {
             --bg-body: #0f172a;
-            --bg-sidebar: rgba(30, 41, 59, 0.85);
+            --bg-sidebar: rgba(30, 41, 59, 0.9);
             --bg-card: #1e293b;
             --bg-card-hover: #273549;
             --bg-input: #334155;
@@ -418,6 +418,24 @@
             border: 2px dashed #94a3b8;
         }
 
+        /* Quick Credentials Box */
+        .demo-cred-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .demo-cred-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -439,7 +457,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#" onclick="handleBrandClick()">
                 <i class="fas fa-parking"></i> <span>EasyPark</span>
             </a>
 
@@ -447,75 +465,200 @@
                 <span class="live-badge"><span class="live-pulse"></span> <span class="d-none d-lg-inline">LIVE SYSTEM</span></span>
             </div>
 
-            <ul class="nav flex-column mt-2" id="sidebarMenu">
-                <li class="nav-item">
-                    <a class="nav-link active" onclick="switchView('dashboard')">
-                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('park-now')">
-                        <i class="fas fa-sign-in-alt"></i> <span>Park Now</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('checkout')">
-                        <i class="fas fa-sign-out-alt"></i> <span>Check-Out</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('reservations')">
-                        <i class="fas fa-calendar-check"></i> <span>Reservations</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('history')">
-                        <i class="fas fa-history"></i> <span>Parking History</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('reports')">
-                        <i class="fas fa-chart-pie"></i> <span>Reports & Analytics</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('users')">
-                        <i class="fas fa-users"></i> <span>User Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="switchView('feedback')">
-                        <i class="fas fa-comment-dots"></i> <span>Feedback</span>
-                    </a>
-                </li>
-            </ul>
+            <!-- DYNAMIC SIDEBAR MENU -->
+            <ul class="nav flex-column mt-2" id="sidebarMenu"></ul>
         </div>
 
-        <div class="sidebar-footer">
-            <div class="d-flex align-items-center gap-2 mb-2 px-2 text-white-50 small">
-                <i class="fas fa-user-shield text-primary"></i>
-                <div class="text-truncate">
-                    <strong class="text-white" id="currentUserDisplay">Admin (root)</strong>
-                    <div style="font-size: 0.7rem;" id="currentRoleBadge">Super Admin</div>
-                </div>
-            </div>
-            <button class="btn btn-outline-secondary w-100 btn-sm text-start" onclick="toggleRoleSwitch()">
-                <i class="fas fa-exchange-alt me-1"></i> <span>Switch Role</span>
-            </button>
-            <button class="btn btn-outline-danger w-100 btn-sm mt-1 text-start" onclick="resetDatabaseConfirm()">
-                <i class="fas fa-rotate-left me-1"></i> <span>Reset Demo Data</span>
-            </button>
-        </div>
+        <div class="sidebar-footer" id="sidebarFooter"></div>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
 
-        <!-- VIEW: DASHBOARD -->
-        <div id="view-dashboard" class="content-view">
+        <!-- ================= VIEW: LOGIN ================= -->
+        <div id="view-login" class="content-view" style="display: none;">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6 col-lg-5">
+                    <div class="text-center mb-4">
+                        <h2 class="h3 fw-bold mb-2">Parking Lot System & Management</h2>
+                        <p class="text-muted small">Enter your credentials to access your parking dashboard.</p>
+                    </div>
+
+                    <div class="card shadow-lg">
+                        <div class="card-header text-center py-3">
+                            <h4 class="mb-0 fw-bold"><i class="fas fa-key text-primary me-2"></i>Login</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="loginUsername" placeholder="root / nabil" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-lock"></i></span>
+                                        <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                                    </div>
+                                </div>
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary py-2 fw-semibold">
+                                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="text-center mt-3 pt-3 border-top border-secondary">
+                                <a href="#" onclick="switchView('register')" class="text-primary small">
+                                    Don't have an account? <strong>Register here</strong>.
+                                </a>
+                            </div>
+
+                            <!-- Fast Demo Quick Logins -->
+                            <div class="mt-4 pt-3 border-top border-secondary">
+                                <div class="text-muted small mb-2 fw-semibold"><i class="fas fa-bolt text-warning me-1"></i> Quick Demo Logins:</div>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="demo-cred-btn d-flex justify-content-between align-items-center" onclick="quickFillLogin('root', '1234')">
+                                        <div><strong class="text-white">Admin:</strong> <code>root</code> / <code>1234</code></div>
+                                        <span class="badge bg-danger">Super Admin</span>
+                                    </div>
+                                    <div class="demo-cred-btn d-flex justify-content-between align-items-center" onclick="quickFillLogin('nabil', '1234')">
+                                        <div><strong class="text-white">Customer:</strong> <code>nabil</code> / <code>1234</code></div>
+                                        <span class="badge bg-primary">User</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: REGISTER ================= -->
+        <div id="view-register" class="content-view" style="display: none;">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card shadow-lg">
+                        <div class="card-header text-center py-3">
+                            <h4 class="mb-0 fw-bold"><i class="fas fa-user-plus text-success me-2"></i>Register</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="regName" placeholder="e.g. Nabil Hasan" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Username *</label>
+                                    <input type="text" class="form-control" id="regUsername" placeholder="e.g. nabil_evan" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password *</label>
+                                    <input type="password" class="form-control" id="regPassword" placeholder="••••••••" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">License Plate (Optional)</label>
+                                    <input type="text" class="form-control" id="regPlate" placeholder="e.g. DHK-METRO-GA-1234" style="text-transform: uppercase;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Account Role</label>
+                                    <select class="form-select" id="regRole">
+                                        <option value="customer">Customer / Driver</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-success py-2 fw-semibold">
+                                        <i class="fas fa-check-circle me-1"></i> Register Account
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer text-center py-3">
+                            <a href="#" onclick="switchView('login')" class="small">
+                                Already have an account? <strong>Login here</strong>.
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: USER DASHBOARD ================= -->
+        <div id="view-user-dashboard" class="content-view" style="display: none;">
+            <h1 class="mb-4" id="userWelcomeHeading">Welcome, Customer!</h1>
+
+            <!-- User Stats -->
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-chart-line me-2 text-primary"></i> Your Stats</div>
+                <div class="card-body">
+                    <p class="card-text mb-2"><strong>Total Check-outs:</strong> <span id="userTotalActivities">4</span></p>
+                    <p class="card-text mb-0"><strong>Discount Level:</strong> <span class="badge bg-success">5.00%</span></p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-bolt me-2 text-warning"></i> Quick Actions</div>
+                <div class="card-body d-flex gap-3 flex-wrap">
+                    <div>
+                        <h5 class="card-title">Make a Reservation</h5>
+                        <p class="card-text text-muted small">Reserve a parking spot in advance.</p>
+                        <button onclick="switchView('reservations')" class="btn btn-primary btn-sm"><i class="fas fa-calendar-plus me-1"></i> Reserve a Spot</button>
+                    </div>
+                    <div class="border-start border-secondary ps-3">
+                        <h5 class="card-title">Park Right Now</h5>
+                        <p class="card-text text-muted small">Directly enter parking lot and generate pass.</p>
+                        <button onclick="switchView('park-now')" class="btn btn-success btn-sm"><i class="fas fa-car me-1"></i> Park Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Parking Session (if any) -->
+            <div class="card mb-4 border-success" id="userActiveSessionCard">
+                <div class="card-header bg-success text-white"><i class="fas fa-parking me-2"></i> Current Parking Session</div>
+                <div class="card-body" id="userActiveSessionBody">
+                    <h5 class="card-title text-success">You are parked!</h5>
+                    <p class="card-text">
+                        <strong>Lot:</strong> Gulshan Plaza Park<br>
+                        <strong>Slot:</strong> A-02<br>
+                        <strong>Vehicle:</strong> DHK-METRO-GA-3002<br>
+                        <strong>Check-In Time:</strong> 18:30
+                    </p>
+                    <button onclick="switchView('checkout')" class="btn btn-danger"><i class="fas fa-sign-out-alt me-1"></i> Check Out Now</button>
+                </div>
+            </div>
+
+            <!-- Active Reservations (Direct Check-in) -->
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-clock me-2 text-info"></i> Active Reservations (Direct Check-In)</div>
+                <div class="card-body">
+                    <div class="list-group" id="userReservationsList">
+                        <div class="list-group-item bg-dark text-white border-secondary mb-2 rounded">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 text-primary">Slot A-04</h5>
+                                <small class="text-muted">Gulshan Plaza Park</small>
+                            </div>
+                            <p class="mb-1">Time: Today 20:00</p>
+                            <span class="badge bg-info text-dark mb-2">Pre-paid: ৳100.00</span>
+                            <div>
+                                <small class="text-muted">Vehicle: DHK-METRO-KHA-8891</small>
+                                <button class="btn btn-success btn-sm float-end" onclick="alert('Direct Check-In confirmed for Reservation RES-101!')">Check In Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: ADMIN DASHBOARD ================= -->
+        <div id="view-dashboard" class="content-view" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h1 class="h3 mb-1">Smart Parking Overview</h1>
+                    <h1 class="h3 mb-1">Admin Dashboard</h1>
                     <p class="text-muted mb-0">Real-time parking space utilization and revenue monitoring.</p>
                 </div>
                 <div class="d-flex gap-2">
@@ -552,7 +695,7 @@
                     <div class="card metric-card">
                         <div class="metric-icon blue"><i class="fas fa-coins"></i></div>
                         <div>
-                            <div class="text-muted small">Today's Revenue</div>
+                            <div class="text-muted small">Total Revenue</div>
                             <h3 class="mb-0" id="statRevenue">৳0</h3>
                         </div>
                     </div>
@@ -573,14 +716,14 @@
                 <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-map-marker-alt text-primary"></i>
-                        <span>Live Parking Lots by Area</span>
+                        <span>Parking Lots by Area</span>
                     </div>
                     <!-- Area filter pills -->
                     <div class="btn-group btn-group-sm" id="areaFilterPills"></div>
                 </div>
                 <div class="card-body">
                     <div class="legend mb-3">
-                        <div class="legend-item"><div class="legend-color status-available"></div> <span>Available (Click to Park)</span></div>
+                        <div class="legend-item"><div class="legend-color status-available"></div> <span>Available</span></div>
                         <div class="legend-item"><div class="legend-color status-occupied"></div> <span>Occupied</span></div>
                         <div class="legend-item"><div class="legend-color status-reserved"></div> <span>Reserved</span></div>
                     </div>
@@ -590,7 +733,7 @@
             </div>
         </div>
 
-        <!-- VIEW: PARK NOW / CHECK-IN -->
+        <!-- ================= VIEW: PARK NOW / CHECK-IN ================= -->
         <div id="view-park-now" class="content-view" style="display: none;">
             <div class="mb-4">
                 <h1 class="h3 mb-1">Park Now (Vehicle Check-In)</h1>
@@ -660,7 +803,7 @@
             </div>
         </div>
 
-        <!-- VIEW: CHECKOUT -->
+        <!-- ================= VIEW: CHECKOUT ================= -->
         <div id="view-checkout" class="content-view" style="display: none;">
             <div class="mb-4">
                 <h1 class="h3 mb-1">Check-Out & Billing</h1>
@@ -736,7 +879,7 @@
             </div>
         </div>
 
-        <!-- VIEW: RESERVATIONS -->
+        <!-- ================= VIEW: RESERVATIONS ================= -->
         <div id="view-reservations" class="content-view" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <div>
@@ -771,11 +914,11 @@
             </div>
         </div>
 
-        <!-- VIEW: HISTORY -->
+        <!-- ================= VIEW: HISTORY ================= -->
         <div id="view-history" class="content-view" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <div>
-                    <h1 class="h3 mb-1">Parking Session History</h1>
+                    <h1 class="h3 mb-1" id="historyPageTitle">Parking History</h1>
                     <p class="text-muted">Full record of completed parking sessions and audit logs.</p>
                 </div>
                 <div class="d-flex gap-2">
@@ -807,7 +950,7 @@
             </div>
         </div>
 
-        <!-- VIEW: REPORTS & ANALYTICS -->
+        <!-- ================= VIEW: REPORTS & ANALYTICS ================= -->
         <div id="view-reports" class="content-view" style="display: none;">
             <div class="mb-4">
                 <h1 class="h3 mb-1">Reports & DBMS Analytics</h1>
@@ -863,7 +1006,7 @@
             </div>
         </div>
 
-        <!-- VIEW: USER MANAGEMENT -->
+        <!-- ================= VIEW: USER MANAGEMENT ================= -->
         <div id="view-users" class="content-view" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <div>
@@ -897,7 +1040,7 @@
             </div>
         </div>
 
-        <!-- VIEW: FEEDBACK -->
+        <!-- ================= VIEW: FEEDBACK ================= -->
         <div id="view-feedback" class="content-view" style="display: none;">
             <div class="mb-4">
                 <h1 class="h3 mb-1">Customer Feedback & Reviews</h1>
@@ -987,7 +1130,7 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- CORE JAVASCRIPT LOGIC & STATE ENGINE -->
+    <!-- CORE JAVASCRIPT LOGIC & AUTH ENGINE -->
     <script>
         // --- 1. DEFAULT DATASET INITIALIZER ---
         const INITIAL_AREAS = ["Gulshan", "Banani", "Dhanmondi", "Uttara", "Motijheel", "Mirpur"];
@@ -1021,7 +1164,6 @@
                     const slotNum = `${prefix}-0${num}`;
                     const type = (i % 5 === 0) ? "Electric" : (i % 3 === 0) ? "SUV" : "Car";
                     
-                    // Add some pre-parked sample cars
                     let status = "available";
                     let session = null;
                     if (slotId === 2 || slotId === 6 || slotId === 15 || slotId === 24) {
@@ -1064,14 +1206,16 @@
             { id: "SESS-504", plate: "DHK-METRO-GA-1022", owner: "Sabrina Akter", spot: "Uttara (A-01)", entry: "2026-09-06 16:00", exit: "2026-09-06 17:30", duration: "1h 30m", fee: 90, status: "Paid (Card)" }
         ]);
         let users = getStoredData('users', [
-            { id: 1, name: "Root Administrator", username: "root", role: "Super Admin", status: "Active", date: "2026-01-01" },
-            { id: 2, name: "Nabil Hasan", username: "nabil", role: "Customer", status: "Active", date: "2026-08-15" },
-            { id: 3, name: "Manager Banani", username: "banani_op", role: "Staff", status: "Active", date: "2026-08-20" }
+            { id: 1, name: "Root Administrator", username: "root", password: "1234", role: "admin", status: "Active", date: "2026-01-01", total_activities: 25, discount_percentage: 10 },
+            { id: 2, name: "Nabil Hasan", username: "nabil", password: "1234", role: "customer", status: "Active", date: "2026-08-15", total_activities: 4, discount_percentage: 5 }
         ]);
         let feedbacks = getStoredData('feedbacks', [
             { author: "Nabil Hasan", rating: 5, comment: "Very fast check-in at Gulshan lot. Automated ticket system is seamless!", time: "2 hours ago" },
             { author: "Sadia Karim", rating: 4, comment: "Parking space is clean and well lit. Would love online advance slots for EV charging.", time: "Yesterday" }
         ]);
+
+        // Current Logged in user: null if not logged in
+        let currentUser = getStoredData('currentUser', null);
 
         let selectedAreaFilter = "All";
         let activeCheckoutSession = null;
@@ -1085,17 +1229,158 @@
             setStoredData('history', history);
             setStoredData('users', users);
             setStoredData('feedbacks', feedbacks);
+            setStoredData('currentUser', currentUser);
         }
 
-        // --- 2. VIEW SWITCHING ---
+        // --- 2. AUTHENTICATION & SIDEBAR RENDERING ---
+        function updateAuthUI() {
+            const menu = document.getElementById('sidebarMenu');
+            const footer = document.getElementById('sidebarFooter');
+            menu.innerHTML = '';
+
+            if (!currentUser) {
+                // Unauthenticated Menu
+                menu.innerHTML = `
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-login" onclick="switchView('login')">
+                            <i class="fas fa-key"></i> <span>Login</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-register" onclick="switchView('register')">
+                            <i class="fas fa-user-plus"></i> <span>Register</span>
+                        </a>
+                    </li>
+                `;
+                footer.innerHTML = `
+                    <div class="text-white-50 small mb-2 px-2">
+                        <i class="fas fa-lock me-1"></i> Not Logged In
+                    </div>
+                    <button class="btn btn-primary w-100 btn-sm" onclick="switchView('login')">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login Now
+                    </button>
+                `;
+            } else if (currentUser.role === 'admin') {
+                // Admin Menu
+                menu.innerHTML = `
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-dashboard" onclick="switchView('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i> <span>Admin Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-park-now" onclick="switchView('park-now')">
+                            <i class="fas fa-sign-in-alt"></i> <span>Park Now</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-checkout" onclick="switchView('checkout')">
+                            <i class="fas fa-sign-out-alt"></i> <span>Check-Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-users" onclick="switchView('users')">
+                            <i class="fas fa-users"></i> <span>Users Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-reports" onclick="switchView('reports')">
+                            <i class="fas fa-chart-pie"></i> <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-reservations" onclick="switchView('reservations')">
+                            <i class="fas fa-calendar-check"></i> <span>Reservations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-history" onclick="switchView('history')">
+                            <i class="fas fa-history"></i> <span>Parking History</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-feedback" onclick="switchView('feedback')">
+                            <i class="fas fa-comments"></i> <span>User Feedback</span>
+                        </a>
+                    </li>
+                `;
+                footer.innerHTML = `
+                    <div class="text-white-50 mb-3 small px-2">
+                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.name}</div>
+                        <span class="badge bg-danger mt-1">Super Admin</span>
+                    </div>
+                    <button class="btn btn-danger w-100 btn-sm" onclick="handleLogout()">
+                        <i class="fas fa-power-off me-1"></i> Logout
+                    </button>
+                `;
+            } else {
+                // Customer Menu
+                menu.innerHTML = `
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-user-dashboard" onclick="switchView('user-dashboard')">
+                            <i class="fas fa-user"></i> <span>My Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-park-now" onclick="switchView('park-now')">
+                            <i class="fas fa-sign-in-alt"></i> <span>Park Now</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-checkout" onclick="switchView('checkout')">
+                            <i class="fas fa-sign-out-alt"></i> <span>Check-Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-reservations" onclick="switchView('reservations')">
+                            <i class="fas fa-calendar-check"></i> <span>Reservations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-history" onclick="switchView('history')">
+                            <i class="fas fa-history"></i> <span>My History</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-feedback" onclick="switchView('feedback')">
+                            <i class="fas fa-comment-dots"></i> <span>Feedback</span>
+                        </a>
+                    </li>
+                `;
+                footer.innerHTML = `
+                    <div class="text-white-50 mb-3 small px-2">
+                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.name}</div>
+                        <span class="badge bg-primary mt-1">Customer</span>
+                    </div>
+                    <button class="btn btn-danger w-100 btn-sm" onclick="handleLogout()">
+                        <i class="fas fa-power-off me-1"></i> Logout
+                    </button>
+                `;
+            }
+        }
+
+        function handleBrandClick() {
+            if (!currentUser) switchView('login');
+            else if (currentUser.role === 'admin') switchView('dashboard');
+            else switchView('user-dashboard');
+        }
+
+        // --- 3. VIEW SWITCHING ---
         function switchView(viewName) {
+            // If trying to access protected views without login, redirect to login
+            if (!currentUser && viewName !== 'login' && viewName !== 'register') {
+                viewName = 'login';
+            }
+
             document.querySelectorAll('.content-view').forEach(el => el.style.display = 'none');
             const target = document.getElementById('view-' + viewName);
             if (target) target.style.display = 'block';
 
             document.querySelectorAll('#sidebarMenu .nav-link').forEach(link => link.classList.remove('active'));
-            event?.currentTarget?.classList?.add('active');
+            const activeNav = document.getElementById('nav-' + viewName);
+            if (activeNav) activeNav.classList.add('active');
 
+            if (viewName === 'user-dashboard') renderUserDashboard();
             if (viewName === 'dashboard') refreshDashboardUI();
             if (viewName === 'park-now') prepareParkNowView();
             if (viewName === 'checkout') renderCheckoutList();
@@ -1106,7 +1391,106 @@
             if (viewName === 'feedback') renderFeedbackList();
         }
 
-        // --- 3. DASHBOARD RENDERING ---
+        // --- 4. LOGIN & REGISTER HANDLERS ---
+        function quickFillLogin(u, p) {
+            document.getElementById('loginUsername').value = u;
+            document.getElementById('loginPassword').value = p;
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            const found = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+            if (found) {
+                currentUser = found;
+                saveAll();
+                updateAuthUI();
+                alert(`Welcome back, ${currentUser.name}! You are successfully logged in.`);
+                if (currentUser.role === 'admin') {
+                    switchView('dashboard');
+                } else {
+                    switchView('user-dashboard');
+                }
+            } else {
+                alert("Invalid username or password! (Try root / 1234 or nabil / 1234)");
+            }
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const plate = document.getElementById('regPlate').value.trim().toUpperCase();
+            const role = document.getElementById('regRole').value;
+
+            if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                alert("Username already exists! Please choose another.");
+                return;
+            }
+
+            const newUser = {
+                id: users.length + 1,
+                name: name,
+                username: username,
+                password: password,
+                plate: plate || null,
+                role: role,
+                status: "Active",
+                date: new Date().toISOString().split('T')[0],
+                total_activities: 0,
+                discount_percentage: 0
+            };
+
+            users.push(newUser);
+            currentUser = newUser;
+            saveAll();
+            updateAuthUI();
+            alert(`Account registered successfully! Welcome, ${newUser.name}.`);
+            if (newUser.role === 'admin') switchView('dashboard');
+            else switchView('user-dashboard');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            saveAll();
+            updateAuthUI();
+            alert("You have been logged out.");
+            switchView('login');
+        }
+
+        // --- 5. USER DASHBOARD RENDERING ---
+        function renderUserDashboard() {
+            if (!currentUser) return;
+            document.getElementById('userWelcomeHeading').textContent = `Welcome, ${currentUser.name}!`;
+            document.getElementById('userTotalActivities').textContent = currentUser.total_activities || 4;
+            
+            // Check if user has parked car
+            const parkedSlot = slots.find(s => s.status === 'occupied' && s.active_session && (s.active_session.owner.toLowerCase().includes(currentUser.name.toLowerCase()) || s.active_session.owner.toLowerCase().includes(currentUser.username.toLowerCase())));
+            const sessionCard = document.getElementById('userActiveSessionCard');
+            const sessionBody = document.getElementById('userActiveSessionBody');
+
+            if (parkedSlot) {
+                const lot = lots.find(l => l.id === parkedSlot.lot_id);
+                sessionCard.style.display = 'block';
+                sessionBody.innerHTML = `
+                    <h5 class="card-title text-success">You are parked!</h5>
+                    <p class="card-text">
+                        <strong>Lot:</strong> ${lot.name}<br>
+                        <strong>Slot:</strong> ${parkedSlot.slot_number}<br>
+                        <strong>Vehicle:</strong> ${parkedSlot.active_session.plate}<br>
+                        <strong>Check-In Time:</strong> ${new Date(parkedSlot.active_session.check_in_time).toLocaleTimeString()}
+                    </p>
+                    <button onclick="switchView('checkout')" class="btn btn-danger"><i class="fas fa-sign-out-alt me-1"></i> Check Out Now</button>
+                `;
+            } else {
+                sessionCard.style.display = 'none';
+            }
+        }
+
+        // --- 6. ADMIN DASHBOARD RENDERING ---
         function refreshDashboardUI() {
             const total = slots.length;
             const occupied = slots.filter(s => s.status === 'occupied').length;
@@ -1200,7 +1584,7 @@
             }
         }
 
-        // --- 4. PARK NOW FLOW ---
+        // --- 7. PARK NOW FLOW ---
         function prepareParkNowView() {
             const selector = document.getElementById('checkInLotSelector');
             selector.innerHTML = '';
@@ -1210,6 +1594,12 @@
                 opt.textContent = `${lot.name} (${lot.area} - ৳${lot.hourly_rate}/hr)`;
                 selector.appendChild(opt);
             });
+            if (currentUser && currentUser.name) {
+                document.getElementById('checkInOwner').value = currentUser.name;
+            }
+            if (currentUser && currentUser.plate) {
+                document.getElementById('checkInPlate').value = currentUser.plate;
+            }
             renderCheckInSlotPicker();
         }
 
@@ -1290,7 +1680,7 @@
             renderCheckInSlotPicker();
         }
 
-        // --- 5. CHECK-OUT FLOW ---
+        // --- 8. CHECK-OUT FLOW ---
         function renderCheckoutList() {
             const list = document.getElementById('activeParkedVehiclesList');
             list.innerHTML = '';
@@ -1389,7 +1779,7 @@
             renderCheckoutList();
         }
 
-        // --- 6. RESERVATIONS ---
+        // --- 9. RESERVATIONS ---
         function renderReservationsTable() {
             const tbody = document.getElementById('reservationsTableBody');
             tbody.innerHTML = '';
@@ -1422,7 +1812,7 @@
         function openNewReservationModal() {
             const plate = prompt("Enter Vehicle Plate (e.g. DHK-METRO-GA-9922):");
             if (!plate) return;
-            const name = prompt("Enter Driver / Customer Name:") || "Valued Customer";
+            const name = prompt("Enter Driver / Customer Name:") || (currentUser ? currentUser.name : "Valued Customer");
             const area = prompt("Choose Area (Gulshan / Banani / Dhanmondi / Uttara):") || "Gulshan";
             
             const newRes = {
@@ -1441,7 +1831,7 @@
             alert(`Reservation #${newRes.id} confirmed successfully!`);
         }
 
-        // --- 7. HISTORY TABLE ---
+        // --- 10. HISTORY TABLE ---
         function renderHistoryTable() {
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
@@ -1469,9 +1859,8 @@
             });
         }
 
-        // --- 8. REPORTS & DBMS CHARTS ---
+        // --- 11. REPORTS & DBMS CHARTS ---
         function renderReportsView() {
-            // Popular lots table
             const lotCounts = {};
             history.forEach(h => {
                 const lotPart = h.spot.split('(')[0].trim();
@@ -1545,7 +1934,7 @@
             });
         }
 
-        // --- 9. USERS MANAGEMENT ---
+        // --- 12. USERS MANAGEMENT ---
         function renderUsersTable() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
@@ -1555,7 +1944,7 @@
                     <td><strong>#USR-${u.id}</strong></td>
                     <td>${u.name}</td>
                     <td class="font-monospace text-info">${u.username}</td>
-                    <td><span class="badge ${u.role === 'Super Admin' ? 'bg-danger' : u.role === 'Staff' ? 'bg-primary' : 'bg-secondary'}">${u.role}</span></td>
+                    <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-primary'}">${u.role}</span></td>
                     <td><span class="badge bg-success">${u.status}</span></td>
                     <td>${u.date}</td>
                     <td>
@@ -1570,21 +1959,25 @@
             const name = prompt("Enter Full Name:");
             if (!name) return;
             const uname = prompt("Enter Username:") || name.toLowerCase().replace(/\s+/g, '');
-            const role = prompt("Enter Role (Customer / Staff / Admin):") || "Customer";
+            const pass = prompt("Enter Password:") || "1234";
+            const role = prompt("Enter Role (customer / admin):") || "customer";
             users.push({
                 id: users.length + 1,
                 name: name,
                 username: uname,
+                password: pass,
                 role: role,
                 status: "Active",
-                date: new Date().toISOString().split('T')[0]
+                date: new Date().toISOString().split('T')[0],
+                total_activities: 0,
+                discount_percentage: 0
             });
             saveAll();
             renderUsersTable();
             alert(`User @${uname} created!`);
         }
 
-        // --- 10. FEEDBACK ---
+        // --- 13. FEEDBACK ---
         function renderFeedbackList() {
             const container = document.getElementById('feedbackList');
             container.innerHTML = '';
@@ -1622,41 +2015,16 @@
             alert("Thank you! Your feedback has been recorded.");
         }
 
-        // --- 11. ROLE SWITCHER & RESET DEMO ---
-        let currentRole = "Admin";
-        function toggleRoleSwitch() {
-            if (currentRole === "Admin") {
-                currentRole = "Customer";
-                document.getElementById('currentUserDisplay').textContent = "Nabil Hasan (nabil)";
-                document.getElementById('currentRoleBadge').textContent = "Customer / Driver";
-                alert("Switched to Customer View!");
-            } else {
-                currentRole = "Admin";
-                document.getElementById('currentUserDisplay').textContent = "Admin (root)";
-                document.getElementById('currentRoleBadge').textContent = "Super Admin";
-                alert("Switched to Admin View!");
-            }
-        }
-
-        function resetDatabaseConfirm() {
-            if (confirm("Reset all parking slots, history and records back to initial clean demo data?")) {
-                localStorage.clear();
-                lots = INITIAL_LOTS;
-                slots = generateDefaultSlots();
-                reservations = [
-                    { id: "RES-101", plate: "DHK-METRO-KHA-8891", owner: "Dr. Farhan", area: "Gulshan", lot_name: "Gulshan Plaza Park", slot_number: "A-04", time: "2026-09-06 20:00", status: "Confirmed" }
-                ];
-                history = [
-                    { id: "SESS-501", plate: "DHK-METRO-GA-8712", owner: "Kamrul Islam", spot: "Gulshan (A-01)", entry: "2026-09-06 14:00", exit: "2026-09-06 16:30", duration: "2h 30m", fee: 250, status: "Paid (bKash)" }
-                ];
-                saveAll();
-                location.reload();
-            }
-        }
-
         // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
-            refreshDashboardUI();
+            updateAuthUI();
+            if (!currentUser) {
+                switchView('login');
+            } else if (currentUser.role === 'admin') {
+                switchView('dashboard');
+            } else {
+                switchView('user-dashboard');
+            }
         });
     </script>
 </body>
