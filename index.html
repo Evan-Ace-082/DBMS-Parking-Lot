@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyPark - Smart Parking Management System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-sidebar: rgba(30, 41, 59, 0.85);
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --bg-input: #334155;
+            --border-color: rgba(255, 255, 255, 0.08);
+            
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #64748b;
+            
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            
+            --sidebar-width: 270px;
+            --header-font: 'Poppins', sans-serif;
+            --body-font: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--body-font);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--header-font);
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            padding: 1.5rem 1.25rem;
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .navbar-brand {
+            font-family: var(--header-font);
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .navbar-brand i {
+            color: var(--primary);
+            font-size: 1.6rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.35rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.06);
+            transform: translateX(3px);
+        }
+
+        .nav-link.active {
+            color: #fff !important;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2.25rem 2.5rem;
+            min-height: 100vh;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent 400px),
+                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.03), transparent 400px);
+        }
+
+        /* --- Custom Cards --- */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            color: var(--text-main);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-header {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--header-font);
+            font-weight: 600;
+            padding: 1.1rem 1.35rem;
+        }
+
+        .card-body {
+            padding: 1.35rem;
+        }
+
+        /* --- Stat Badge / Metric Card --- */
+        .metric-card {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem;
+        }
+
+        .metric-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .metric-icon.blue { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+        .metric-icon.green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .metric-icon.amber { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .metric-icon.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+        /* --- Form Elements --- */
+        .form-control, .form-select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: var(--radius-md);
+            padding: 0.65rem 0.9rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #3b4c63;
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        /* --- Buttons --- */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border: none;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+            border-radius: var(--radius-md);
+        }
+
+        /* --- Parking Slot Grid --- */
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 14px;
+            margin-top: 1.25rem;
+        }
+
+        .slot {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+        }
+
+        .slot:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .slot .slot-number {
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .slot .slot-type {
+            font-size: 0.72rem;
+            font-weight: 500;
+            opacity: 0.85;
+            display: block;
+        }
+
+        .slot .slot-meta {
+            font-size: 0.68rem;
+            margin-top: 4px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .status-available {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #34d399;
+        }
+        .status-available:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: var(--success);
+        }
+
+        .status-occupied {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #f87171;
+        }
+
+        .status-reserved {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.5);
+            color: #fbbf24;
+        }
+
+        .slot.selected {
+            border-color: #fff !important;
+            box-shadow: 0 0 0 3px var(--primary), 0 8px 20px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* --- Legend --- */
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        /* --- Tables --- */
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-border-color: var(--border-color);
+        }
+
+        .table thead th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+            padding: 0.85rem;
+        }
+
+        .table tbody td {
+            padding: 0.85rem;
+            vertical-align: middle;
+        }
+
+        /* --- Live Notification / Banner --- */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .live-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* --- Receipt & Ticket Modal --- */
+        .ticket-box {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            border: 2px dashed #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 75px;
+                padding: 1rem 0.5rem;
+            }
+            .sidebar .navbar-brand span, .nav-link span, .sidebar-footer div span {
+                display: none;
+            }
+            .main-content {
+                margin-left: 75px;
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-parking"></i> <span>EasyPark</span>
+            </a>
+
+            <div class="mb-3 d-flex align-items-center justify-content-between px-2">
+                <span class="live-badge"><span class="live-pulse"></span> <span class="d-none d-lg-inline">LIVE SYSTEM</span></span>
+            </div>
+
+            <ul class="nav flex-column mt-2" id="sidebarMenu">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="switchView('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('park-now')">
+                        <i class="fas fa-sign-in-alt"></i> <span>Park Now</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('checkout')">
+                        <i class="fas fa-sign-out-alt"></i> <span>Check-Out</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('reservations')">
+                        <i class="fas fa-calendar-check"></i> <span>Reservations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('history')">
+                        <i class="fas fa-history"></i> <span>Parking History</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('reports')">
+                        <i class="fas fa-chart-pie"></i> <span>Reports & Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('users')">
+                        <i class="fas fa-users"></i> <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchView('feedback')">
+                        <i class="fas fa-comment-dots"></i> <span>Feedback</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="d-flex align-items-center gap-2 mb-2 px-2 text-white-50 small">
+                <i class="fas fa-user-shield text-primary"></i>
+                <div class="text-truncate">
+                    <strong class="text-white" id="currentUserDisplay">Admin (root)</strong>
+                    <div style="font-size: 0.7rem;" id="currentRoleBadge">Super Admin</div>
+                </div>
+            </div>
+            <button class="btn btn-outline-secondary w-100 btn-sm text-start" onclick="toggleRoleSwitch()">
+                <i class="fas fa-exchange-alt me-1"></i> <span>Switch Role</span>
+            </button>
+            <button class="btn btn-outline-danger w-100 btn-sm mt-1 text-start" onclick="resetDatabaseConfirm()">
+                <i class="fas fa-rotate-left me-1"></i> <span>Reset Demo Data</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- VIEW: DASHBOARD -->
+        <div id="view-dashboard" class="content-view">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h1 class="h3 mb-1">Smart Parking Overview</h1>
+                    <p class="text-muted mb-0">Real-time parking space utilization and revenue monitoring.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" onclick="switchView('park-now')">
+                        <i class="fas fa-plus me-1"></i> New Check-In
+                    </button>
+                    <button class="btn btn-outline-light" onclick="refreshDashboardUI()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stat Metric Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card metric-card">
+                        <div class="metric-icon green"><i class="fas fa-car"></i></div>
+                        <div>
+                            <div class="text-muted small">Available Slots</div>
+                            <h3 class="mb-0" id="statAvailable">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card metric-card">
+                        <div class="metric-icon amber"><i class="fas fa-parking"></i></div>
+                        <div>
+                            <div class="text-muted small">Occupied Slots</div>
+                            <h3 class="mb-0" id="statOccupied">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card metric-card">
+                        <div class="metric-icon blue"><i class="fas fa-coins"></i></div>
+                        <div>
+                            <div class="text-muted small">Today's Revenue</div>
+                            <h3 class="mb-0" id="statRevenue">৳0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card metric-card">
+                        <div class="metric-icon purple"><i class="fas fa-chart-line"></i></div>
+                        <div>
+                            <div class="text-muted small">Occupancy Rate</div>
+                            <h3 class="mb-0" id="statOccupancyRate">0%</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Areas & Interactive Parking Lots -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        <span>Live Parking Lots by Area</span>
+                    </div>
+                    <!-- Area filter pills -->
+                    <div class="btn-group btn-group-sm" id="areaFilterPills"></div>
+                </div>
+                <div class="card-body">
+                    <div class="legend mb-3">
+                        <div class="legend-item"><div class="legend-color status-available"></div> <span>Available (Click to Park)</span></div>
+                        <div class="legend-item"><div class="legend-color status-occupied"></div> <span>Occupied</span></div>
+                        <div class="legend-item"><div class="legend-color status-reserved"></div> <span>Reserved</span></div>
+                    </div>
+
+                    <div id="lotsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: PARK NOW / CHECK-IN -->
+        <div id="view-park-now" class="content-view" style="display: none;">
+            <div class="mb-4">
+                <h1 class="h3 mb-1">Park Now (Vehicle Check-In)</h1>
+                <p class="text-muted">Register an incoming vehicle and allocate an instant parking spot.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-id-card me-2 text-primary"></i> Vehicle & Driver Details</div>
+                        <div class="card-body">
+                            <form id="checkInForm" onsubmit="handleCheckInSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Vehicle License Plate *</label>
+                                    <input type="text" class="form-control" id="checkInPlate" placeholder="e.g. DHK-METRO-GA-4521" required style="text-transform: uppercase;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Vehicle Type</label>
+                                    <select class="form-select" id="checkInVehicleType">
+                                        <option value="Car">Sedan / Hatchback (Car)</option>
+                                        <option value="SUV">SUV / Jeep</option>
+                                        <option value="Bike">Motorcycle (Bike)</option>
+                                        <option value="Electric">Electric Vehicle (EV)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Driver / Owner Name</label>
+                                    <input type="text" class="form-control" id="checkInOwner" placeholder="e.g. Nabil Hasan" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="checkInPhone" placeholder="017XXXXXXXX">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Selected Area & Slot</label>
+                                    <div class="p-3 bg-dark rounded border border-secondary d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold" id="selectedSlotText">No slot selected yet</div>
+                                            <div class="small text-muted" id="selectedSlotMeta">Please select a green slot on the right grid</div>
+                                        </div>
+                                        <span class="badge bg-primary fs-6" id="selectedRateBadge">৳100/hr</span>
+                                    </div>
+                                    <input type="hidden" id="selectedSlotId" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 fs-6">
+                                    <i class="fas fa-ticket-alt me-2"></i> Confirm Check-In & Generate Ticket
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-th me-2 text-primary"></i> Select Available Slot</span>
+                            <select class="form-select form-select-sm w-auto" id="checkInLotSelector" onchange="renderCheckInSlotPicker()"></select>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">Click any green <strong>Available</strong> slot to select it for this vehicle.</p>
+                            <div id="checkInSlotPickerGrid" class="slot-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: CHECKOUT -->
+        <div id="view-checkout" class="content-view" style="display: none;">
+            <div class="mb-4">
+                <h1 class="h3 mb-1">Check-Out & Billing</h1>
+                <p class="text-muted">Process vehicle exit, calculate elapsed duration and collect parking fee.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-search me-2 text-primary"></i> Search Active Parking Session</div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="checkoutSearchInput" placeholder="Enter Vehicle Plate or Ticket ID..." style="text-transform: uppercase;">
+                                <button class="btn btn-primary" onclick="lookupCheckoutSession()"><i class="fas fa-search"></i> Find</button>
+                            </div>
+
+                            <div class="small text-muted mb-2">Or select from currently parked vehicles:</div>
+                            <div class="list-group" id="activeParkedVehiclesList" style="max-height: 380px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card" id="checkoutBillingCard" style="display: none;">
+                        <div class="card-header bg-primary text-white"><i class="fas fa-receipt me-2"></i> Parking Invoice & Checkout</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Vehicle Plate:</span>
+                                <strong id="billPlate" class="text-white"></strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Driver:</span>
+                                <span id="billOwner"></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Parking Spot:</span>
+                                <span id="billSlot"></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Check-In Time:</span>
+                                <span id="billEntryTime"></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Duration:</span>
+                                <strong id="billDuration" class="text-info"></strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Hourly Rate:</span>
+                                <span id="billRate"></span>
+                            </div>
+                            <hr class="border-secondary">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="h5 mb-0">Total Amount Due:</span>
+                                <h3 class="text-success mb-0" id="billTotal">৳0</h3>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method</label>
+                                <select class="form-select" id="paymentMethod">
+                                    <option value="bKash">bKash (Digital)</option>
+                                    <option value="Nagad">Nagad (Digital)</option>
+                                    <option value="Cash">Cash at Booth</option>
+                                    <option value="Card">Credit / Debit Card</option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-success w-100 py-2 fs-6" onclick="processPaymentAndCheckout()">
+                                <i class="fas fa-check-circle me-1"></i> Pay & Release Slot
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: RESERVATIONS -->
+        <div id="view-reservations" class="content-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <h1 class="h3 mb-1">Spot Reservations</h1>
+                    <p class="text-muted">Reserve parking spaces in advance for VIPs, members, or events.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openNewReservationModal()">
+                    <i class="fas fa-calendar-plus me-1"></i> Create Reservation
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Res ID</th>
+                                    <th>Vehicle No</th>
+                                    <th>Driver / User</th>
+                                    <th>Area & Lot</th>
+                                    <th>Slot</th>
+                                    <th>Reserved Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservationsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: HISTORY -->
+        <div id="view-history" class="content-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <h1 class="h3 mb-1">Parking Session History</h1>
+                    <p class="text-muted">Full record of completed parking sessions and audit logs.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control form-control-sm" id="historySearch" placeholder="Search by Plate / Driver..." oninput="filterHistoryTable()">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>Vehicle No</th>
+                                    <th>Driver</th>
+                                    <th>Spot</th>
+                                    <th>Entry Time</th>
+                                    <th>Exit Time</th>
+                                    <th>Duration</th>
+                                    <th>Amount Paid</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: REPORTS & ANALYTICS -->
+        <div id="view-reports" class="content-view" style="display: none;">
+            <div class="mb-4">
+                <h1 class="h3 mb-1">Reports & DBMS Analytics</h1>
+                <p class="text-muted">Aggregated metrics, peak usage hours, and top user trends.</p>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-chart-bar me-2 text-primary"></i> Peak Parking Hours Distribution</div>
+                        <div class="card-body">
+                            <canvas id="peakHoursChart" height="130"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-chart-pie me-2 text-success"></i> Vehicle Type Share</div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <canvas id="vehicleShareChart" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-trophy me-2 text-warning"></i> Most Popular Parking Lots</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover mb-0">
+                                    <thead><tr><th>#</th><th>Lot Name</th><th>Area</th><th>Total Bookings</th></tr></thead>
+                                    <tbody id="popularLotsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-crown me-2 text-primary"></i> Top Frequent Drivers</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover mb-0">
+                                    <thead><tr><th>#</th><th>User Name</th><th>Vehicle</th><th>Visits</th><th>Total Spent</th></tr></thead>
+                                    <tbody id="topUsersTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: USER MANAGEMENT -->
+        <div id="view-users" class="content-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <h1 class="h3 mb-1">User & Staff Management</h1>
+                    <p class="text-muted">Manage system users, operators, and customer accounts.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openNewUserModal()">
+                    <i class="fas fa-user-plus me-1"></i> Add New User
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Registered On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: FEEDBACK -->
+        <div id="view-feedback" class="content-view" style="display: none;">
+            <div class="mb-4">
+                <h1 class="h3 mb-1">Customer Feedback & Reviews</h1>
+                <p class="text-muted">User satisfaction feedback and parking experience ratings.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-pen-alt me-2 text-primary"></i> Submit New Feedback</div>
+                        <div class="card-body">
+                            <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Your Name</label>
+                                    <input type="text" class="form-control" id="feedbackAuthor" required placeholder="Nabil Hasan">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <select class="form-select" id="feedbackRating">
+                                        <option value="5">⭐⭐⭐⭐⭐ (5/5) Excellent</option>
+                                        <option value="4">⭐⭐⭐⭐ (4/5) Very Good</option>
+                                        <option value="3">⭐⭐⭐ (3/5) Average</option>
+                                        <option value="2">⭐⭐ (2/5) Poor</option>
+                                        <option value="1">⭐ (1/5) Terrible</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Comments / Suggestions</label>
+                                    <textarea class="form-control" id="feedbackComment" rows="4" required placeholder="Clean parking spots, quick gate access..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-1"></i> Send Feedback
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header"><i class="fas fa-comments me-2 text-primary"></i> Recent Feedback</div>
+                        <div class="card-body">
+                            <div id="feedbackList" class="d-flex flex-column gap-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TICKET MODAL -->
+    <div class="modal fade" id="ticketModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="fas fa-ticket-alt text-primary me-2"></i> Digital Parking Pass</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="ticket-box text-center" id="ticketPrintArea">
+                        <h4 class="fw-bold mb-1">EASYPARK SYSTEM</h4>
+                        <div class="small text-muted mb-3">Dhaka Smart Parking Network</div>
+                        <div class="border-top border-bottom border-dark py-2 my-2 text-start">
+                            <div><strong>TICKET ID:</strong> <span id="tktId">#EP-9021</span></div>
+                            <div><strong>VEHICLE:</strong> <span id="tktPlate">DHK-METRO-GA-1234</span></div>
+                            <div><strong>DRIVER:</strong> <span id="tktOwner">Nabil</span></div>
+                            <div><strong>SPOT:</strong> <span id="tktSpot">A-01 (Gulshan)</span></div>
+                            <div><strong>ENTRY:</strong> <span id="tktTime">2026-09-06 19:10</span></div>
+                            <div><strong>RATE:</strong> ৳100 / Hour</div>
+                        </div>
+                        <div class="my-3">
+                            <i class="fas fa-qrcode fa-5x"></i>
+                            <div class="small mt-1 text-muted">Scan at checkout kiosk</div>
+                        </div>
+                        <div class="small text-muted">Please keep this ticket safely. Thank you!</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fas fa-print me-1"></i> Print Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CORE JAVASCRIPT LOGIC & STATE ENGINE -->
+    <script>
+        // --- 1. DEFAULT DATASET INITIALIZER ---
+        const INITIAL_AREAS = ["Gulshan", "Banani", "Dhanmondi", "Uttara", "Motijheel", "Mirpur"];
+        
+        const INITIAL_LOTS = [
+            { id: 1, name: "Gulshan Plaza Park", area: "Gulshan", hourly_rate: 100, total_slots: 12 },
+            { id: 2, name: "Banani Tower Parking", area: "Banani", hourly_rate: 120, total_slots: 10 },
+            { id: 3, name: "Dhanmondi Lake View Lot", area: "Dhanmondi", hourly_rate: 80, total_slots: 10 },
+            { id: 4, name: "Uttara Sector 3 Hub", area: "Uttara", hourly_rate: 60, total_slots: 8 },
+            { id: 5, name: "Motijheel Business Park", area: "Motijheel", hourly_rate: 100, total_slots: 12 },
+            { id: 6, name: "Mirpur Stadium Lot", area: "Mirpur", hourly_rate: 50, total_slots: 10 }
+        ];
+
+        function getStoredData(key, fallback) {
+            const saved = localStorage.getItem('easypark_' + key);
+            return saved ? JSON.parse(saved) : fallback;
+        }
+
+        function setStoredData(key, data) {
+            localStorage.setItem('easypark_' + key, JSON.stringify(data));
+        }
+
+        // Initialize slots
+        function generateDefaultSlots() {
+            let slots = [];
+            let slotId = 1;
+            INITIAL_LOTS.forEach(lot => {
+                for (let i = 1; i <= lot.total_slots; i++) {
+                    const prefix = String.fromCharCode(65 + Math.floor((i - 1) / 4));
+                    const num = ((i - 1) % 4) + 1;
+                    const slotNum = `${prefix}-0${num}`;
+                    const type = (i % 5 === 0) ? "Electric" : (i % 3 === 0) ? "SUV" : "Car";
+                    
+                    // Add some pre-parked sample cars
+                    let status = "available";
+                    let session = null;
+                    if (slotId === 2 || slotId === 6 || slotId === 15 || slotId === 24) {
+                        status = "occupied";
+                        session = {
+                            id: 100 + slotId,
+                            plate: `DHK-METRO-GA-${3000 + slotId}`,
+                            owner: ["Rahim Ahmed", "Sadia Karim", "Tanvir Hossain", "Fahim Shahriar"][slotId % 4],
+                            type: type,
+                            check_in_time: new Date(Date.now() - (slotId * 42 * 60000)).toISOString()
+                        };
+                    } else if (slotId === 4 || slotId === 18) {
+                        status = "reserved";
+                    }
+
+                    slots.push({
+                        id: slotId++,
+                        lot_id: lot.id,
+                        slot_number: slotNum,
+                        slot_type: type,
+                        status: status,
+                        active_session: session
+                    });
+                }
+            });
+            return slots;
+        }
+
+        // State Objects
+        let lots = getStoredData('lots', INITIAL_LOTS);
+        let slots = getStoredData('slots', generateDefaultSlots());
+        let reservations = getStoredData('reservations', [
+            { id: "RES-101", plate: "DHK-METRO-KHA-8891", owner: "Dr. Farhan", area: "Gulshan", lot_name: "Gulshan Plaza Park", slot_number: "A-04", time: "2026-09-06 20:00", status: "Confirmed" },
+            { id: "RES-102", plate: "DHK-METRO-CHA-1120", owner: "Ayesha Siddiqua", area: "Banani", lot_name: "Banani Tower Parking", slot_number: "B-02", time: "2026-09-06 21:30", status: "Confirmed" }
+        ]);
+        let history = getStoredData('history', [
+            { id: "SESS-501", plate: "DHK-METRO-GA-8712", owner: "Kamrul Islam", spot: "Gulshan (A-01)", entry: "2026-09-06 14:00", exit: "2026-09-06 16:30", duration: "2h 30m", fee: 250, status: "Paid (bKash)" },
+            { id: "SESS-502", plate: "DHK-METRO-LA-4419", owner: "Zubair Rahman", spot: "Banani (A-03)", entry: "2026-09-06 15:15", exit: "2026-09-06 17:00", duration: "1h 45m", fee: 210, status: "Paid (Cash)" },
+            { id: "SESS-503", plate: "DHK-METRO-BHA-9931", owner: "Mehedi Hasan", spot: "Dhanmondi (A-02)", entry: "2026-09-06 13:00", exit: "2026-09-06 16:00", duration: "3h 00m", fee: 240, status: "Paid (Nagad)" },
+            { id: "SESS-504", plate: "DHK-METRO-GA-1022", owner: "Sabrina Akter", spot: "Uttara (A-01)", entry: "2026-09-06 16:00", exit: "2026-09-06 17:30", duration: "1h 30m", fee: 90, status: "Paid (Card)" }
+        ]);
+        let users = getStoredData('users', [
+            { id: 1, name: "Root Administrator", username: "root", role: "Super Admin", status: "Active", date: "2026-01-01" },
+            { id: 2, name: "Nabil Hasan", username: "nabil", role: "Customer", status: "Active", date: "2026-08-15" },
+            { id: 3, name: "Manager Banani", username: "banani_op", role: "Staff", status: "Active", date: "2026-08-20" }
+        ]);
+        let feedbacks = getStoredData('feedbacks', [
+            { author: "Nabil Hasan", rating: 5, comment: "Very fast check-in at Gulshan lot. Automated ticket system is seamless!", time: "2 hours ago" },
+            { author: "Sadia Karim", rating: 4, comment: "Parking space is clean and well lit. Would love online advance slots for EV charging.", time: "Yesterday" }
+        ]);
+
+        let selectedAreaFilter = "All";
+        let activeCheckoutSession = null;
+        let peakChartInstance = null;
+        let shareChartInstance = null;
+
+        function saveAll() {
+            setStoredData('lots', lots);
+            setStoredData('slots', slots);
+            setStoredData('reservations', reservations);
+            setStoredData('history', history);
+            setStoredData('users', users);
+            setStoredData('feedbacks', feedbacks);
+        }
+
+        // --- 2. VIEW SWITCHING ---
+        function switchView(viewName) {
+            document.querySelectorAll('.content-view').forEach(el => el.style.display = 'none');
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.style.display = 'block';
+
+            document.querySelectorAll('#sidebarMenu .nav-link').forEach(link => link.classList.remove('active'));
+            event?.currentTarget?.classList?.add('active');
+
+            if (viewName === 'dashboard') refreshDashboardUI();
+            if (viewName === 'park-now') prepareParkNowView();
+            if (viewName === 'checkout') renderCheckoutList();
+            if (viewName === 'reservations') renderReservationsTable();
+            if (viewName === 'history') renderHistoryTable();
+            if (viewName === 'reports') renderReportsView();
+            if (viewName === 'users') renderUsersTable();
+            if (viewName === 'feedback') renderFeedbackList();
+        }
+
+        // --- 3. DASHBOARD RENDERING ---
+        function refreshDashboardUI() {
+            const total = slots.length;
+            const occupied = slots.filter(s => s.status === 'occupied').length;
+            const available = slots.filter(s => s.status === 'available').length;
+            const rate = Math.round((occupied / total) * 100) || 0;
+            const totalRev = history.reduce((acc, h) => acc + (h.fee || 0), 0);
+
+            document.getElementById('statAvailable').textContent = available;
+            document.getElementById('statOccupied').textContent = occupied;
+            document.getElementById('statRevenue').textContent = '৳' + totalRev.toLocaleString();
+            document.getElementById('statOccupancyRate').textContent = rate + '%';
+
+            // Area Filter Pills
+            const pillsContainer = document.getElementById('areaFilterPills');
+            pillsContainer.innerHTML = '';
+            const allBtn = document.createElement('button');
+            allBtn.className = `btn ${selectedAreaFilter === 'All' ? 'btn-primary' : 'btn-outline-secondary'}`;
+            allBtn.textContent = 'All Areas';
+            allBtn.onclick = () => { selectedAreaFilter = 'All'; refreshDashboardUI(); };
+            pillsContainer.appendChild(allBtn);
+
+            INITIAL_AREAS.forEach(area => {
+                const btn = document.createElement('button');
+                btn.className = `btn ${selectedAreaFilter === area ? 'btn-primary' : 'btn-outline-secondary'}`;
+                btn.textContent = area;
+                btn.onclick = () => { selectedAreaFilter = area; refreshDashboardUI(); };
+                pillsContainer.appendChild(btn);
+            });
+
+            // Render Lots and Slots
+            const lotsContainer = document.getElementById('lotsContainer');
+            lotsContainer.innerHTML = '';
+
+            const filteredLots = selectedAreaFilter === 'All' ? lots : lots.filter(l => l.area === selectedAreaFilter);
+
+            filteredLots.forEach(lot => {
+                const lotSlots = slots.filter(s => s.lot_id === lot.id);
+                const lotAvail = lotSlots.filter(s => s.status === 'available').length;
+
+                const lotCard = document.createElement('div');
+                lotCard.className = 'card mb-4 bg-dark border-secondary';
+                lotCard.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="text-white fs-5">${lot.name}</strong>
+                            <span class="badge bg-secondary ms-2">${lot.area}</span>
+                            <span class="badge bg-primary ms-1">৳${lot.hourly_rate}/hr</span>
+                        </div>
+                        <span class="small text-muted">${lotAvail} / ${lotSlots.length} Available</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="slot-grid" id="lot-slots-${lot.id}"></div>
+                    </div>
+                `;
+                lotsContainer.appendChild(lotCard);
+
+                const slotGrid = lotCard.querySelector(`#lot-slots-${lot.id}`);
+                lotSlots.forEach(slot => {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = `slot status-${slot.status}`;
+                    let extraInfo = '';
+                    if (slot.status === 'occupied' && slot.active_session) {
+                        extraInfo = `<span class="slot-meta text-truncate">${slot.active_session.plate}</span>`;
+                    }
+                    slotDiv.innerHTML = `
+                        <span class="slot-number">${slot.slot_number}</span>
+                        <span class="slot-type">(${slot.slot_type})</span>
+                        ${extraInfo}
+                    `;
+                    slotDiv.onclick = () => handleSlotClick(slot, lot);
+                    slotGrid.appendChild(slotDiv);
+                });
+            });
+        }
+
+        function handleSlotClick(slot, lot) {
+            if (slot.status === 'available') {
+                switchView('park-now');
+                setTimeout(() => {
+                    document.getElementById('checkInLotSelector').value = lot.id;
+                    renderCheckInSlotPicker();
+                    selectSlotForCheckIn(slot.id, lot, slot.slot_number);
+                }, 50);
+            } else if (slot.status === 'occupied') {
+                switchView('checkout');
+                setTimeout(() => {
+                    selectVehicleForCheckout(slot.active_session, slot, lot);
+                }, 50);
+            } else {
+                alert(`Slot ${slot.slot_number} in ${lot.name} is currently ${slot.status.toUpperCase()}.`);
+            }
+        }
+
+        // --- 4. PARK NOW FLOW ---
+        function prepareParkNowView() {
+            const selector = document.getElementById('checkInLotSelector');
+            selector.innerHTML = '';
+            lots.forEach(lot => {
+                const opt = document.createElement('option');
+                opt.value = lot.id;
+                opt.textContent = `${lot.name} (${lot.area} - ৳${lot.hourly_rate}/hr)`;
+                selector.appendChild(opt);
+            });
+            renderCheckInSlotPicker();
+        }
+
+        function renderCheckInSlotPicker() {
+            const lotId = parseInt(document.getElementById('checkInLotSelector').value);
+            const currentLot = lots.find(l => l.id === lotId) || lots[0];
+            const lotSlots = slots.filter(s => s.lot_id === currentLot.id);
+            const grid = document.getElementById('checkInSlotPickerGrid');
+            grid.innerHTML = '';
+
+            lotSlots.forEach(slot => {
+                const div = document.createElement('div');
+                div.className = `slot status-${slot.status}`;
+                div.id = `picker-slot-${slot.id}`;
+                div.innerHTML = `
+                    <span class="slot-number">${slot.slot_number}</span>
+                    <span class="slot-type">${slot.slot_type}</span>
+                    <span class="slot-meta text-capitalize">${slot.status}</span>
+                `;
+                if (slot.status === 'available') {
+                    div.onclick = () => selectSlotForCheckIn(slot.id, currentLot, slot.slot_number);
+                }
+                grid.appendChild(div);
+            });
+        }
+
+        function selectSlotForCheckIn(slotId, lot, slotNumber) {
+            document.querySelectorAll('#checkInSlotPickerGrid .slot').forEach(s => s.classList.remove('selected'));
+            const selectedElem = document.getElementById(`picker-slot-${slotId}`);
+            if (selectedElem) selectedElem.classList.add('selected');
+
+            document.getElementById('selectedSlotId').value = slotId;
+            document.getElementById('selectedSlotText').textContent = `${lot.name} - Slot ${slotNumber}`;
+            document.getElementById('selectedSlotMeta').textContent = `Area: ${lot.area} | Standard rate applies`;
+            document.getElementById('selectedRateBadge').textContent = `৳${lot.hourly_rate}/hr`;
+        }
+
+        function handleCheckInSubmit(e) {
+            e.preventDefault();
+            const slotId = parseInt(document.getElementById('selectedSlotId').value);
+            if (!slotId) {
+                alert("Please click and select an available green slot from the right panel first!");
+                return;
+            }
+
+            const plate = document.getElementById('checkInPlate').value.trim().toUpperCase();
+            const owner = document.getElementById('checkInOwner').value.trim();
+            const type = document.getElementById('checkInVehicleType').value;
+            const targetSlot = slots.find(s => s.id === slotId);
+            const targetLot = lots.find(l => l.id === targetSlot.lot_id);
+
+            const sessionObj = {
+                id: Math.floor(1000 + Math.random() * 9000),
+                plate: plate,
+                owner: owner,
+                type: type,
+                check_in_time: new Date().toISOString()
+            };
+
+            targetSlot.status = "occupied";
+            targetSlot.active_session = sessionObj;
+            saveAll();
+
+            // Populate Digital Ticket Modal
+            document.getElementById('tktId').textContent = `#EP-${sessionObj.id}`;
+            document.getElementById('tktPlate').textContent = plate;
+            document.getElementById('tktOwner').textContent = owner;
+            document.getElementById('tktSpot').textContent = `${targetSlot.slot_number} (${targetLot.name})`;
+            document.getElementById('tktTime').textContent = new Date().toLocaleString();
+
+            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+            ticketModal.show();
+
+            // Reset form
+            document.getElementById('checkInForm').reset();
+            document.getElementById('selectedSlotId').value = '';
+            document.getElementById('selectedSlotText').textContent = 'No slot selected yet';
+            renderCheckInSlotPicker();
+        }
+
+        // --- 5. CHECK-OUT FLOW ---
+        function renderCheckoutList() {
+            const list = document.getElementById('activeParkedVehiclesList');
+            list.innerHTML = '';
+            const occupiedSlots = slots.filter(s => s.status === 'occupied' && s.active_session);
+
+            if (occupiedSlots.length === 0) {
+                list.innerHTML = `<div class="p-3 text-center text-muted">No vehicles are currently parked in any lot.</div>`;
+                return;
+            }
+
+            occupiedSlots.forEach(slot => {
+                const lot = lots.find(l => l.id === slot.lot_id);
+                const sess = slot.active_session;
+                const entryDate = new Date(sess.check_in_time);
+                const item = document.createElement('a');
+                item.className = 'list-group-item list-group-item-action bg-dark border-secondary text-white d-flex justify-content-between align-items-center mb-2 rounded';
+                item.style.cursor = 'pointer';
+                item.innerHTML = `
+                    <div>
+                        <strong class="text-primary">${sess.plate}</strong> (${sess.type})
+                        <div class="small text-muted">${lot.name} • Slot ${slot.slot_number}</div>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-danger">Parked</span>
+                        <div class="small text-muted mt-1">In: ${entryDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    </div>
+                `;
+                item.onclick = () => selectVehicleForCheckout(sess, slot, lot);
+                list.appendChild(item);
+            });
+        }
+
+        function selectVehicleForCheckout(session, slot, lot) {
+            activeCheckoutSession = { session, slot, lot };
+            const entryTime = new Date(session.check_in_time);
+            const now = new Date();
+            const elapsedMs = Math.max(now - entryTime, 1000 * 60 * 15); // Minimum 15 mins
+            const elapsedHours = elapsedMs / (1000 * 60 * 60);
+            const billableHours = Math.max(1, Math.ceil(elapsedHours));
+            const totalFee = billableHours * lot.hourly_rate;
+
+            const hoursDisplay = Math.floor(elapsedHours);
+            const minsDisplay = Math.floor((elapsedHours % 1) * 60);
+
+            document.getElementById('billPlate').textContent = session.plate;
+            document.getElementById('billOwner').textContent = session.owner;
+            document.getElementById('billSlot').textContent = `${lot.name} (${slot.slot_number})`;
+            document.getElementById('billEntryTime').textContent = entryTime.toLocaleString();
+            document.getElementById('billDuration').textContent = `${hoursDisplay} hrs ${minsDisplay} mins (Billed for ${billableHours} hr${billableHours > 1 ? 's' : ''})`;
+            document.getElementById('billRate').textContent = `৳${lot.hourly_rate} / hour`;
+            document.getElementById('billTotal').textContent = `৳${totalFee}`;
+
+            document.getElementById('checkoutBillingCard').style.display = 'block';
+        }
+
+        function lookupCheckoutSession() {
+            const query = document.getElementById('checkoutSearchInput').value.trim().toUpperCase();
+            if (!query) return;
+            const match = slots.find(s => s.status === 'occupied' && s.active_session && (s.active_session.plate.includes(query) || ("#EP-" + s.active_session.id).includes(query)));
+            if (match) {
+                const lot = lots.find(l => l.id === match.lot_id);
+                selectVehicleForCheckout(match.active_session, match, lot);
+            } else {
+                alert(`No active parked vehicle found matching: ${query}`);
+            }
+        }
+
+        function processPaymentAndCheckout() {
+            if (!activeCheckoutSession) return;
+            const { session, slot, lot } = activeCheckoutSession;
+            const method = document.getElementById('paymentMethod').value;
+            const totalText = document.getElementById('billTotal').textContent.replace('৳', '');
+            const fee = parseInt(totalText) || 100;
+
+            // Add to history
+            history.unshift({
+                id: `SESS-${session.id || Math.floor(100 + Math.random()*900)}`,
+                plate: session.plate,
+                owner: session.owner,
+                spot: `${lot.area} (${slot.slot_number})`,
+                entry: new Date(session.check_in_time).toLocaleString(),
+                exit: new Date().toLocaleString(),
+                duration: document.getElementById('billDuration').textContent.split('(')[0].trim(),
+                fee: fee,
+                status: `Paid (${method})`
+            });
+
+            // Free slot
+            slot.status = "available";
+            slot.active_session = null;
+            activeCheckoutSession = null;
+            saveAll();
+
+            alert(`Payment of ৳${fee} received via ${method}! Gate opened & Slot ${slot.slot_number} is now AVAILABLE.`);
+            document.getElementById('checkoutBillingCard').style.display = 'none';
+            renderCheckoutList();
+        }
+
+        // --- 6. RESERVATIONS ---
+        function renderReservationsTable() {
+            const tbody = document.getElementById('reservationsTableBody');
+            tbody.innerHTML = '';
+            reservations.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${r.id}</strong></td>
+                    <td>${r.plate}</td>
+                    <td>${r.owner}</td>
+                    <td>${r.area} - ${r.lot_name}</td>
+                    <td><span class="badge bg-warning text-dark">${r.slot_number}</span></td>
+                    <td>${r.time}</td>
+                    <td><span class="badge bg-success">${r.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="cancelReservation('${r.id}')"><i class="fas fa-times"></i> Cancel</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function cancelReservation(id) {
+            if (confirm(`Cancel reservation ${id}?`)) {
+                reservations = reservations.filter(r => r.id !== id);
+                saveAll();
+                renderReservationsTable();
+            }
+        }
+
+        function openNewReservationModal() {
+            const plate = prompt("Enter Vehicle Plate (e.g. DHK-METRO-GA-9922):");
+            if (!plate) return;
+            const name = prompt("Enter Driver / Customer Name:") || "Valued Customer";
+            const area = prompt("Choose Area (Gulshan / Banani / Dhanmondi / Uttara):") || "Gulshan";
+            
+            const newRes = {
+                id: `RES-${Math.floor(100 + Math.random()*900)}`,
+                plate: plate.toUpperCase(),
+                owner: name,
+                area: area,
+                lot_name: `${area} Plaza Park`,
+                slot_number: "A-0" + (Math.floor(Math.random()*4)+1),
+                time: new Date(Date.now() + 3600000).toLocaleString(),
+                status: "Confirmed"
+            };
+            reservations.push(newRes);
+            saveAll();
+            renderReservationsTable();
+            alert(`Reservation #${newRes.id} confirmed successfully!`);
+        }
+
+        // --- 7. HISTORY TABLE ---
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            history.forEach(h => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${h.id}</strong></td>
+                    <td class="text-primary font-monospace">${h.plate}</td>
+                    <td>${h.owner}</td>
+                    <td>${h.spot}</td>
+                    <td>${h.entry}</td>
+                    <td>${h.exit}</td>
+                    <td>${h.duration}</td>
+                    <td><strong class="text-success">৳${h.fee}</strong></td>
+                    <td><span class="badge bg-info text-dark">${h.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterHistoryTable() {
+            const q = document.getElementById('historySearch').value.toLowerCase();
+            document.querySelectorAll('#historyTableBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        // --- 8. REPORTS & DBMS CHARTS ---
+        function renderReportsView() {
+            // Popular lots table
+            const lotCounts = {};
+            history.forEach(h => {
+                const lotPart = h.spot.split('(')[0].trim();
+                lotCounts[lotPart] = (lotCounts[lotPart] || 0) + 1;
+            });
+            lots.forEach(l => {
+                if (!lotCounts[l.name] && !lotCounts[l.area]) lotCounts[l.area] = Math.floor(Math.random() * 8) + 2;
+            });
+
+            const popularTbody = document.getElementById('popularLotsTableBody');
+            popularTbody.innerHTML = '';
+            let rank = 1;
+            Object.entries(lotCounts).sort((a,b) => b[1] - a[1]).slice(0, 5).forEach(([name, count]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${rank++}</td><td><strong>${name} Parking</strong></td><td>${name}</td><td><span class="badge bg-primary">${count} sessions</span></td>`;
+                popularTbody.appendChild(tr);
+            });
+
+            // Top Users
+            const userTbody = document.getElementById('topUsersTableBody');
+            userTbody.innerHTML = `
+                <tr><td>1</td><td><strong>Rahim Ahmed</strong></td><td>Sedan (Car)</td><td>14</td><td class="text-success">৳1,650</td></tr>
+                <tr><td>2</td><td><strong>Sadia Karim</strong></td><td>SUV</td><td>11</td><td class="text-success">৳1,420</td></tr>
+                <tr><td>3</td><td><strong>Tanvir Hossain</strong></td><td>Sedan</td><td>8</td><td class="text-success">৳950</td></tr>
+                <tr><td>4</td><td><strong>Nabil Hasan</strong></td><td>Bike</td><td>7</td><td class="text-success">৳420</td></tr>
+            `;
+
+            // Chart.js: Peak Hours
+            const ctxPeak = document.getElementById('peakHoursChart').getContext('2d');
+            if (peakChartInstance) peakChartInstance.destroy();
+            peakChartInstance = new Chart(ctxPeak, {
+                type: 'bar',
+                data: {
+                    labels: ['8 AM', '10 AM', '12 PM', '2 PM', '4 PM', '6 PM', '8 PM', '10 PM'],
+                    datasets: [{
+                        label: 'Parked Vehicles',
+                        data: [12, 28, 45, 38, 52, 60, 42, 18],
+                        backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+
+            // Chart.js: Vehicle Share
+            const ctxShare = document.getElementById('vehicleShareChart').getContext('2d');
+            if (shareChartInstance) shareChartInstance.destroy();
+            shareChartInstance = new Chart(ctxShare, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sedan/Car', 'SUV', 'Motorbike', 'Electric'],
+                    datasets: [{
+                        data: [55, 25, 15, 5],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#a855f7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } }
+                }
+            });
+        }
+
+        // --- 9. USERS MANAGEMENT ---
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#USR-${u.id}</strong></td>
+                    <td>${u.name}</td>
+                    <td class="font-monospace text-info">${u.username}</td>
+                    <td><span class="badge ${u.role === 'Super Admin' ? 'bg-danger' : u.role === 'Staff' ? 'bg-primary' : 'bg-secondary'}">${u.role}</span></td>
+                    <td><span class="badge bg-success">${u.status}</span></td>
+                    <td>${u.date}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-light me-1" onclick="alert('User #${u.id} updated')"><i class="fas fa-edit"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openNewUserModal() {
+            const name = prompt("Enter Full Name:");
+            if (!name) return;
+            const uname = prompt("Enter Username:") || name.toLowerCase().replace(/\s+/g, '');
+            const role = prompt("Enter Role (Customer / Staff / Admin):") || "Customer";
+            users.push({
+                id: users.length + 1,
+                name: name,
+                username: uname,
+                role: role,
+                status: "Active",
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveAll();
+            renderUsersTable();
+            alert(`User @${uname} created!`);
+        }
+
+        // --- 10. FEEDBACK ---
+        function renderFeedbackList() {
+            const container = document.getElementById('feedbackList');
+            container.innerHTML = '';
+            feedbacks.forEach(f => {
+                const div = document.createElement('div');
+                div.className = 'p-3 bg-dark rounded border border-secondary';
+                const stars = "⭐".repeat(f.rating);
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong>${f.author}</strong>
+                        <span class="small text-muted">${f.time}</span>
+                    </div>
+                    <div class="mb-2">${stars}</div>
+                    <p class="mb-0 text-white-50 small">${f.comment}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function handleFeedbackSubmit(e) {
+            e.preventDefault();
+            const author = document.getElementById('feedbackAuthor').value.trim();
+            const rating = parseInt(document.getElementById('feedbackRating').value);
+            const comment = document.getElementById('feedbackComment').value.trim();
+
+            feedbacks.unshift({
+                author: author,
+                rating: rating,
+                comment: comment,
+                time: "Just now"
+            });
+            saveAll();
+            renderFeedbackList();
+            document.getElementById('feedbackForm').reset();
+            alert("Thank you! Your feedback has been recorded.");
+        }
+
+        // --- 11. ROLE SWITCHER & RESET DEMO ---
+        let currentRole = "Admin";
+        function toggleRoleSwitch() {
+            if (currentRole === "Admin") {
+                currentRole = "Customer";
+                document.getElementById('currentUserDisplay').textContent = "Nabil Hasan (nabil)";
+                document.getElementById('currentRoleBadge').textContent = "Customer / Driver";
+                alert("Switched to Customer View!");
+            } else {
+                currentRole = "Admin";
+                document.getElementById('currentUserDisplay').textContent = "Admin (root)";
+                document.getElementById('currentRoleBadge').textContent = "Super Admin";
+                alert("Switched to Admin View!");
+            }
+        }
+
+        function resetDatabaseConfirm() {
+            if (confirm("Reset all parking slots, history and records back to initial clean demo data?")) {
+                localStorage.clear();
+                lots = INITIAL_LOTS;
+                slots = generateDefaultSlots();
+                reservations = [
+                    { id: "RES-101", plate: "DHK-METRO-KHA-8891", owner: "Dr. Farhan", area: "Gulshan", lot_name: "Gulshan Plaza Park", slot_number: "A-04", time: "2026-09-06 20:00", status: "Confirmed" }
+                ];
+                history = [
+                    { id: "SESS-501", plate: "DHK-METRO-GA-8712", owner: "Kamrul Islam", spot: "Gulshan (A-01)", entry: "2026-09-06 14:00", exit: "2026-09-06 16:30", duration: "2h 30m", fee: 250, status: "Paid (bKash)" }
+                ];
+                saveAll();
+                location.reload();
+            }
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboardUI();
+        });
+    </script>
+</body>
+</html>
