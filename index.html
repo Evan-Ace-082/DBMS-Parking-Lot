@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyPark - Smart Parking Management System</title>
+    <title>Parking Lot System and Management</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
@@ -184,6 +184,12 @@
 
         .card-body {
             padding: 1.35rem;
+        }
+
+        .card-footer {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border-color);
+            padding: 0.9rem 1.35rem;
         }
 
         /* --- Stat Badge / Metric Card --- */
@@ -418,24 +424,6 @@
             border: 2px dashed #94a3b8;
         }
 
-        /* Quick Credentials Box */
-        .demo-cred-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-md);
-            padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-        }
-        .demo-cred-btn:hover {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: var(--primary);
-            color: #fff;
-        }
-
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -475,61 +463,34 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
 
+        <!-- Flash Messages Area -->
+        <div id="flashMessageContainer" class="mb-4"></div>
+
         <!-- ================= VIEW: LOGIN ================= -->
         <div id="view-login" class="content-view" style="display: none;">
             <div class="row justify-content-center mt-4">
-                <div class="col-md-6 col-lg-5">
-                    <div class="text-center mb-4">
-                        <h2 class="h3 fw-bold mb-2">Parking Lot System & Management</h2>
-                        <p class="text-muted small">Enter your credentials to access your parking dashboard.</p>
-                    </div>
-
-                    <div class="card shadow-lg">
-                        <div class="card-header text-center py-3">
-                            <h4 class="mb-0 fw-bold"><i class="fas fa-key text-primary me-2"></i>Login</h4>
+                <div class="col-md-6 text-center">
+                    <h1 class="mb-4">Parking Lot System and Management</h1>
+                    <div class="card shadow-lg text-start">
+                        <div class="card-header">
+                            <h3 class="text-center mb-0">Login</h3>
                         </div>
                         <div class="card-body p-4">
                             <form id="loginForm" onsubmit="handleLoginSubmit(event)">
                                 <div class="mb-3">
-                                    <label class="form-label">Username</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-user"></i></span>
-                                        <input type="text" class="form-control" id="loginUsername" placeholder="root / nabil" required>
-                                    </div>
+                                    <label for="loginUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="loginUsername" required placeholder="Enter your username">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Password</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-lock"></i></span>
-                                        <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
-                                    </div>
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required placeholder="Enter your password">
                                 </div>
                                 <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-primary py-2 fw-semibold">
-                                        <i class="fas fa-sign-in-alt me-1"></i> Login
-                                    </button>
+                                    <button type="submit" class="btn btn-primary py-2 fw-semibold">Login</button>
                                 </div>
                             </form>
-
-                            <div class="text-center mt-3 pt-3 border-top border-secondary">
-                                <a href="#" onclick="switchView('register')" class="text-primary small">
-                                    Don't have an account? <strong>Register here</strong>.
-                                </a>
-                            </div>
-
-                            <!-- Fast Demo Quick Logins -->
-                            <div class="mt-4 pt-3 border-top border-secondary">
-                                <div class="text-muted small mb-2 fw-semibold"><i class="fas fa-bolt text-warning me-1"></i> Quick Demo Logins:</div>
-                                <div class="d-flex flex-column gap-2">
-                                    <div class="demo-cred-btn d-flex justify-content-between align-items-center" onclick="quickFillLogin('root', '1234')">
-                                        <div><strong class="text-white">Admin:</strong> <code>root</code> / <code>1234</code></div>
-                                        <span class="badge bg-danger">Super Admin</span>
-                                    </div>
-                                    <div class="demo-cred-btn d-flex justify-content-between align-items-center" onclick="quickFillLogin('nabil', '1234')">
-                                        <div><strong class="text-white">Customer:</strong> <code>nabil</code> / <code>1234</code></div>
-                                        <span class="badge bg-primary">User</span>
-                                    </div>
-                                </div>
+                            <div class="text-center mt-3">
+                                <a href="#" onclick="switchView('register')">Don't have an account? Register here.</a>
                             </div>
                         </div>
                     </div>
@@ -540,47 +501,32 @@
         <!-- ================= VIEW: REGISTER ================= -->
         <div id="view-register" class="content-view" style="display: none;">
             <div class="row justify-content-center mt-4">
-                <div class="col-md-6 col-lg-5">
+                <div class="col-md-6">
                     <div class="card shadow-lg">
-                        <div class="card-header text-center py-3">
-                            <h4 class="mb-0 fw-bold"><i class="fas fa-user-plus text-success me-2"></i>Register</h4>
+                        <div class="card-header">
+                            <h3 class="text-center mb-0">Register</h3>
                         </div>
                         <div class="card-body p-4">
                             <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
                                 <div class="mb-3">
-                                    <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-control" id="regName" placeholder="e.g. Nabil Hasan" required>
+                                    <label for="regUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="regUsername" required placeholder="Choose a username">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Username *</label>
-                                    <input type="text" class="form-control" id="regUsername" placeholder="e.g. nabil_evan" required>
+                                    <label for="regPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="regPassword" required placeholder="Choose a password">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Password *</label>
-                                    <input type="password" class="form-control" id="regPassword" placeholder="••••••••" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">License Plate (Optional)</label>
+                                    <label for="regPlate" class="form-label">License Plate (Optional)</label>
                                     <input type="text" class="form-control" id="regPlate" placeholder="e.g. DHK-METRO-GA-1234" style="text-transform: uppercase;">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Account Role</label>
-                                    <select class="form-select" id="regRole">
-                                        <option value="customer">Customer / Driver</option>
-                                        <option value="admin">Administrator</option>
-                                    </select>
-                                </div>
                                 <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-success py-2 fw-semibold">
-                                        <i class="fas fa-check-circle me-1"></i> Register Account
-                                    </button>
+                                    <button type="submit" class="btn btn-success py-2 fw-semibold">Register</button>
                                 </div>
                             </form>
                         </div>
-                        <div class="card-footer text-center py-3">
-                            <a href="#" onclick="switchView('login')" class="small">
-                                Already have an account? <strong>Login here</strong>.
-                            </a>
+                        <div class="card-footer text-center">
+                            <a href="#" onclick="switchView('login')">Already have an account? Login here.</a>
                         </div>
                     </div>
                 </div>
@@ -589,134 +535,94 @@
 
         <!-- ================= VIEW: USER DASHBOARD ================= -->
         <div id="view-user-dashboard" class="content-view" style="display: none;">
-            <h1 class="mb-4" id="userWelcomeHeading">Welcome, Customer!</h1>
+            <h1 class="mb-4" id="userWelcomeHeading">Welcome!</h1>
 
             <!-- User Stats -->
             <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-chart-line me-2 text-primary"></i> Your Stats</div>
+                <div class="card-header">
+                    Your Stats
+                </div>
                 <div class="card-body">
-                    <p class="card-text mb-2"><strong>Total Check-outs:</strong> <span id="userTotalActivities">4</span></p>
-                    <p class="card-text mb-0"><strong>Discount Level:</strong> <span class="badge bg-success">5.00%</span></p>
+                    <p class="card-text mb-2"><strong>Total Check-outs:</strong> <span id="userTotalActivities">0</span></p>
+                    <p class="card-text mb-0"><strong>Discount Level:</strong> <span class="badge bg-success" id="userDiscountBadge">0.00%</span></p>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
+            <!-- Actions -->
             <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-bolt me-2 text-warning"></i> Quick Actions</div>
-                <div class="card-body d-flex gap-3 flex-wrap">
-                    <div>
-                        <h5 class="card-title">Make a Reservation</h5>
-                        <p class="card-text text-muted small">Reserve a parking spot in advance.</p>
-                        <button onclick="switchView('reservations')" class="btn btn-primary btn-sm"><i class="fas fa-calendar-plus me-1"></i> Reserve a Spot</button>
-                    </div>
-                    <div class="border-start border-secondary ps-3">
-                        <h5 class="card-title">Park Right Now</h5>
-                        <p class="card-text text-muted small">Directly enter parking lot and generate pass.</p>
-                        <button onclick="switchView('park-now')" class="btn btn-success btn-sm"><i class="fas fa-car me-1"></i> Park Now</button>
-                    </div>
+                <div class="card-header">
+                    Actions
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Make a Reservation</h5>
+                    <p class="card-text">Reserve a parking spot in advance.</p>
+                    <button onclick="switchView('reservations')" class="btn btn-primary">Reserve a Spot</button>
                 </div>
             </div>
 
             <!-- Active Parking Session (if any) -->
-            <div class="card mb-4 border-success" id="userActiveSessionCard">
-                <div class="card-header bg-success text-white"><i class="fas fa-parking me-2"></i> Current Parking Session</div>
-                <div class="card-body" id="userActiveSessionBody">
-                    <h5 class="card-title text-success">You are parked!</h5>
-                    <p class="card-text">
-                        <strong>Lot:</strong> Gulshan Plaza Park<br>
-                        <strong>Slot:</strong> A-02<br>
-                        <strong>Vehicle:</strong> DHK-METRO-GA-3002<br>
-                        <strong>Check-In Time:</strong> 18:30
-                    </p>
-                    <button onclick="switchView('checkout')" class="btn btn-danger"><i class="fas fa-sign-out-alt me-1"></i> Check Out Now</button>
+            <div class="card mb-4 border-success" id="userActiveSessionCard" style="display: none;">
+                <div class="card-header bg-success text-white">
+                    Current Parking Session
                 </div>
+                <div class="card-body" id="userActiveSessionBody"></div>
             </div>
 
             <!-- Active Reservations (Direct Check-in) -->
             <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-clock me-2 text-info"></i> Active Reservations (Direct Check-In)</div>
+                <div class="card-header">
+                    Active Reservations (Direct Check-In)
+                </div>
                 <div class="card-body">
-                    <div class="list-group" id="userReservationsList">
-                        <div class="list-group-item bg-dark text-white border-secondary mb-2 rounded">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1 text-primary">Slot A-04</h5>
-                                <small class="text-muted">Gulshan Plaza Park</small>
-                            </div>
-                            <p class="mb-1">Time: Today 20:00</p>
-                            <span class="badge bg-info text-dark mb-2">Pre-paid: ৳100.00</span>
-                            <div>
-                                <small class="text-muted">Vehicle: DHK-METRO-KHA-8891</small>
-                                <button class="btn btn-success btn-sm float-end" onclick="alert('Direct Check-In confirmed for Reservation RES-101!')">Check In Now</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="list-group" id="userReservationsList"></div>
                 </div>
             </div>
         </div>
 
         <!-- ================= VIEW: ADMIN DASHBOARD ================= -->
         <div id="view-dashboard" class="content-view" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <div>
-                    <h1 class="h3 mb-1">Admin Dashboard</h1>
-                    <p class="text-muted mb-0">Real-time parking space utilization and revenue monitoring.</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" onclick="switchView('park-now')">
-                        <i class="fas fa-plus me-1"></i> New Check-In
-                    </button>
-                    <button class="btn btn-outline-light" onclick="refreshDashboardUI()">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-            </div>
+            <h1 class="mb-4">Admin Dashboard</h1>
 
             <!-- Stat Metric Cards -->
             <div class="row g-3 mb-4">
-                <div class="col-sm-6 col-xl-3">
-                    <div class="card metric-card">
-                        <div class="metric-icon green"><i class="fas fa-car"></i></div>
-                        <div>
-                            <div class="text-muted small">Available Slots</div>
-                            <h3 class="mb-0" id="statAvailable">0</h3>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Total Revenue</div>
+                        <div class="card-body">
+                            <h5 class="card-title text-success" id="statRevenue">৳0.00</h5>
+                            <p class="card-text text-muted small">Total earnings from all completed parking sessions.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="card metric-card">
-                        <div class="metric-icon amber"><i class="fas fa-parking"></i></div>
-                        <div>
-                            <div class="text-muted small">Occupied Slots</div>
-                            <h3 class="mb-0" id="statOccupied">0</h3>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Parking Occupancy</div>
+                        <div class="card-body">
+                            <h5 class="card-title" id="statOccupancyText">0 / 62 slots (0%)</h5>
+                            <p class="card-text text-muted small">Current status of parking slots across all lots.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="card metric-card">
-                        <div class="metric-icon blue"><i class="fas fa-coins"></i></div>
-                        <div>
-                            <div class="text-muted small">Total Revenue</div>
-                            <h3 class="mb-0" id="statRevenue">৳0</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="card metric-card">
-                        <div class="metric-icon purple"><i class="fas fa-chart-line"></i></div>
-                        <div>
-                            <div class="text-muted small">Occupancy Rate</div>
-                            <h3 class="mb-0" id="statOccupancyRate">0%</h3>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">User Management</div>
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Users</h5>
+                            <p class="card-text text-muted small">Approve new user registrations and view all users.</p>
+                            <button onclick="switchView('users')" class="btn btn-primary btn-sm">Go to Users</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <h2 class="mb-3">Parking Lots by Area</h2>
 
             <!-- Areas & Interactive Parking Lots -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-map-marker-alt text-primary"></i>
-                        <span>Parking Lots by Area</span>
+                        <span>Select Area</span>
                     </div>
                     <!-- Area filter pills -->
                     <div class="btn-group btn-group-sm" id="areaFilterPills"></div>
@@ -761,7 +667,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Driver / Owner Name</label>
-                                    <input type="text" class="form-control" id="checkInOwner" placeholder="e.g. Nabil Hasan" required>
+                                    <input type="text" class="form-control" id="checkInOwner" placeholder="Enter driver name" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Phone Number</label>
@@ -953,14 +859,14 @@
         <!-- ================= VIEW: REPORTS & ANALYTICS ================= -->
         <div id="view-reports" class="content-view" style="display: none;">
             <div class="mb-4">
-                <h1 class="h3 mb-1">Reports & DBMS Analytics</h1>
+                <h1 class="h3 mb-1">Reports</h1>
                 <p class="text-muted">Aggregated metrics, peak usage hours, and top user trends.</p>
             </div>
 
             <div class="row g-4 mb-4">
                 <div class="col-lg-8">
                     <div class="card h-100">
-                        <div class="card-header"><i class="fas fa-chart-bar me-2 text-primary"></i> Peak Parking Hours Distribution</div>
+                        <div class="card-header"><i class="fas fa-chart-bar me-2 text-primary"></i> Peak Hours (Total Check-ins)</div>
                         <div class="card-body">
                             <canvas id="peakHoursChart" height="130"></canvas>
                         </div>
@@ -979,7 +885,7 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header"><i class="fas fa-trophy me-2 text-warning"></i> Most Popular Parking Lots</div>
+                        <div class="card-header"><i class="fas fa-trophy me-2 text-warning"></i> Most Popular Parking Spots</div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-dark table-hover mb-0">
@@ -992,7 +898,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header"><i class="fas fa-crown me-2 text-primary"></i> Top Frequent Drivers</div>
+                        <div class="card-header"><i class="fas fa-crown me-2 text-primary"></i> Top Users by Activity</div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-dark table-hover mb-0">
@@ -1010,12 +916,9 @@
         <div id="view-users" class="content-view" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <div>
-                    <h1 class="h3 mb-1">User & Staff Management</h1>
-                    <p class="text-muted">Manage system users, operators, and customer accounts.</p>
+                    <h1 class="h3 mb-1">User Management</h1>
+                    <p class="text-muted">Manage user accounts and view member registrations.</p>
                 </div>
-                <button class="btn btn-primary" onclick="openNewUserModal()">
-                    <i class="fas fa-user-plus me-1"></i> Add New User
-                </button>
             </div>
 
             <div class="card">
@@ -1025,12 +928,11 @@
                             <thead>
                                 <tr>
                                     <th>User ID</th>
-                                    <th>Full Name</th>
                                     <th>Username</th>
                                     <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Registered On</th>
-                                    <th>Actions</th>
+                                    <th>License Plate</th>
+                                    <th>Total Check-outs</th>
+                                    <th>Discount</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTableBody"></tbody>
@@ -1043,20 +945,16 @@
         <!-- ================= VIEW: FEEDBACK ================= -->
         <div id="view-feedback" class="content-view" style="display: none;">
             <div class="mb-4">
-                <h1 class="h3 mb-1">Customer Feedback & Reviews</h1>
-                <p class="text-muted">User satisfaction feedback and parking experience ratings.</p>
+                <h1 class="h3 mb-1">Feedback</h1>
+                <p class="text-muted">User feedback and service reviews.</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-lg-5">
                     <div class="card">
-                        <div class="card-header"><i class="fas fa-pen-alt me-2 text-primary"></i> Submit New Feedback</div>
+                        <div class="card-header"><i class="fas fa-pen-alt me-2 text-primary"></i> Submit Feedback</div>
                         <div class="card-body">
                             <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
-                                <div class="mb-3">
-                                    <label class="form-label">Your Name</label>
-                                    <input type="text" class="form-control" id="feedbackAuthor" required placeholder="Nabil Hasan">
-                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Rating</label>
                                     <select class="form-select" id="feedbackRating">
@@ -1068,11 +966,11 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Comments / Suggestions</label>
-                                    <textarea class="form-control" id="feedbackComment" rows="4" required placeholder="Clean parking spots, quick gate access..."></textarea>
+                                    <label class="form-label">Comments</label>
+                                    <textarea class="form-control" id="feedbackComment" rows="4" required placeholder="Write your feedback here..."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-paper-plane me-1"></i> Send Feedback
+                                    <i class="fas fa-paper-plane me-1"></i> Submit Feedback
                                 </button>
                             </form>
                         </div>
@@ -1081,7 +979,7 @@
 
                 <div class="col-lg-7">
                     <div class="card">
-                        <div class="card-header"><i class="fas fa-comments me-2 text-primary"></i> Recent Feedback</div>
+                        <div class="card-header"><i class="fas fa-comments me-2 text-primary"></i> User Feedback</div>
                         <div class="card-body">
                             <div id="feedbackList" class="d-flex flex-column gap-3"></div>
                         </div>
@@ -1107,7 +1005,7 @@
                         <div class="border-top border-bottom border-dark py-2 my-2 text-start">
                             <div><strong>TICKET ID:</strong> <span id="tktId">#EP-9021</span></div>
                             <div><strong>VEHICLE:</strong> <span id="tktPlate">DHK-METRO-GA-1234</span></div>
-                            <div><strong>DRIVER:</strong> <span id="tktOwner">Nabil</span></div>
+                            <div><strong>DRIVER:</strong> <span id="tktOwner">User</span></div>
                             <div><strong>SPOT:</strong> <span id="tktSpot">A-01 (Gulshan)</span></div>
                             <div><strong>ENTRY:</strong> <span id="tktTime">2026-09-06 19:10</span></div>
                             <div><strong>RATE:</strong> ৳100 / Hour</div>
@@ -1151,6 +1049,19 @@
 
         function setStoredData(key, data) {
             localStorage.setItem('easypark_' + key, JSON.stringify(data));
+        }
+
+        function flashMessage(message, type = 'success') {
+            const container = document.getElementById('flashMessageContainer');
+            container.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 6000);
         }
 
         // Initialize slots
@@ -1205,13 +1116,15 @@
             { id: "SESS-503", plate: "DHK-METRO-BHA-9931", owner: "Mehedi Hasan", spot: "Dhanmondi (A-02)", entry: "2026-09-06 13:00", exit: "2026-09-06 16:00", duration: "3h 00m", fee: 240, status: "Paid (Nagad)" },
             { id: "SESS-504", plate: "DHK-METRO-GA-1022", owner: "Sabrina Akter", spot: "Uttara (A-01)", entry: "2026-09-06 16:00", exit: "2026-09-06 17:30", duration: "1h 30m", fee: 90, status: "Paid (Card)" }
         ]);
+        
+        // Seed users (root default admin exists, plus any registered user is saved here)
         let users = getStoredData('users', [
-            { id: 1, name: "Root Administrator", username: "root", password: "1234", role: "admin", status: "Active", date: "2026-01-01", total_activities: 25, discount_percentage: 10 },
-            { id: 2, name: "Nabil Hasan", username: "nabil", password: "1234", role: "customer", status: "Active", date: "2026-08-15", total_activities: 4, discount_percentage: 5 }
+            { id: 1, name: "root", username: "root", password: "1234", role: "admin", license_plate: "ADMIN-01", total_activities: 25, discount_percentage: 10 }
         ]);
+        
         let feedbacks = getStoredData('feedbacks', [
-            { author: "Nabil Hasan", rating: 5, comment: "Very fast check-in at Gulshan lot. Automated ticket system is seamless!", time: "2 hours ago" },
-            { author: "Sadia Karim", rating: 4, comment: "Parking space is clean and well lit. Would love online advance slots for EV charging.", time: "Yesterday" }
+            { author: "Rahim", rating: 5, comment: "Very fast check-in at Gulshan lot. Automated ticket system is seamless!", time: "2 hours ago" },
+            { author: "Sadia", rating: 4, comment: "Parking space is clean and well lit. Would love online advance slots for EV charging.", time: "Yesterday" }
         ]);
 
         // Current Logged in user: null if not logged in
@@ -1257,7 +1170,7 @@
                         <i class="fas fa-lock me-1"></i> Not Logged In
                     </div>
                     <button class="btn btn-primary w-100 btn-sm" onclick="switchView('login')">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login Now
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
                     </button>
                 `;
             } else if (currentUser.role === 'admin') {
@@ -1269,18 +1182,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="nav-park-now" onclick="switchView('park-now')">
-                            <i class="fas fa-sign-in-alt"></i> <span>Park Now</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="nav-checkout" onclick="switchView('checkout')">
-                            <i class="fas fa-sign-out-alt"></i> <span>Check-Out</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" id="nav-users" onclick="switchView('users')">
-                            <i class="fas fa-users"></i> <span>Users Management</span>
+                            <i class="fas fa-users"></i> <span>Users</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -1306,8 +1209,8 @@
                 `;
                 footer.innerHTML = `
                     <div class="text-white-50 mb-3 small px-2">
-                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.name}</div>
-                        <span class="badge bg-danger mt-1">Super Admin</span>
+                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.username}</div>
+                        <span class="badge bg-secondary ms-1">admin</span>
                     </div>
                     <button class="btn btn-danger w-100 btn-sm" onclick="handleLogout()">
                         <i class="fas fa-power-off me-1"></i> Logout
@@ -1318,7 +1221,7 @@
                 menu.innerHTML = `
                     <li class="nav-item">
                         <a class="nav-link" id="nav-user-dashboard" onclick="switchView('user-dashboard')">
-                            <i class="fas fa-user"></i> <span>My Dashboard</span>
+                            <i class="fas fa-user"></i> <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -1349,8 +1252,8 @@
                 `;
                 footer.innerHTML = `
                     <div class="text-white-50 mb-3 small px-2">
-                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.name}</div>
-                        <span class="badge bg-primary mt-1">Customer</span>
+                        <div class="text-white fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i> ${currentUser.username}</div>
+                        <span class="badge bg-secondary ms-1">customer</span>
                     </div>
                     <button class="btn btn-danger w-100 btn-sm" onclick="handleLogout()">
                         <i class="fas fa-power-off me-1"></i> Logout
@@ -1367,7 +1270,7 @@
 
         // --- 3. VIEW SWITCHING ---
         function switchView(viewName) {
-            // If trying to access protected views without login, redirect to login
+            // If unauthenticated and trying to access internal views, redirect to login
             if (!currentUser && viewName !== 'login' && viewName !== 'register') {
                 viewName = 'login';
             }
@@ -1392,11 +1295,6 @@
         }
 
         // --- 4. LOGIN & REGISTER HANDLERS ---
-        function quickFillLogin(u, p) {
-            document.getElementById('loginUsername').value = u;
-            document.getElementById('loginPassword').value = p;
-        }
-
         function handleLoginSubmit(e) {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -1407,68 +1305,69 @@
                 currentUser = found;
                 saveAll();
                 updateAuthUI();
-                alert(`Welcome back, ${currentUser.name}! You are successfully logged in.`);
+                flashMessage('You were successfully logged in.', 'success');
                 if (currentUser.role === 'admin') {
                     switchView('dashboard');
                 } else {
                     switchView('user-dashboard');
                 }
             } else {
-                alert("Invalid username or password! (Try root / 1234 or nabil / 1234)");
+                flashMessage('Invalid username or password. Please check your credentials.', 'danger');
             }
         }
 
         function handleRegisterSubmit(e) {
             e.preventDefault();
-            const name = document.getElementById('regName').value.trim();
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value.trim();
             const plate = document.getElementById('regPlate').value.trim().toUpperCase();
-            const role = document.getElementById('regRole').value;
 
             if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-                alert("Username already exists! Please choose another.");
+                flashMessage('Username already exists! Please choose another.', 'warning');
                 return;
             }
 
             const newUser = {
                 id: users.length + 1,
-                name: name,
+                name: username,
                 username: username,
                 password: password,
-                plate: plate || null,
-                role: role,
-                status: "Active",
-                date: new Date().toISOString().split('T')[0],
+                license_plate: plate || null,
+                role: "customer",
                 total_activities: 0,
-                discount_percentage: 0
+                discount_percentage: 0.00
             };
 
             users.push(newUser);
-            currentUser = newUser;
             saveAll();
-            updateAuthUI();
-            alert(`Account registered successfully! Welcome, ${newUser.name}.`);
-            if (newUser.role === 'admin') switchView('dashboard');
-            else switchView('user-dashboard');
+
+            // Clear register form
+            document.getElementById('registerForm').reset();
+
+            // Switch to login and prefill username
+            switchView('login');
+            document.getElementById('loginUsername').value = username;
+            document.getElementById('loginPassword').value = '';
+            flashMessage('Registration successful! You can now log in with your credentials.', 'success');
         }
 
         function handleLogout() {
             currentUser = null;
             saveAll();
             updateAuthUI();
-            alert("You have been logged out.");
+            flashMessage('You were logged out.', 'info');
             switchView('login');
         }
 
         // --- 5. USER DASHBOARD RENDERING ---
         function renderUserDashboard() {
             if (!currentUser) return;
-            document.getElementById('userWelcomeHeading').textContent = `Welcome, ${currentUser.name}!`;
-            document.getElementById('userTotalActivities').textContent = currentUser.total_activities || 4;
+            document.getElementById('userWelcomeHeading').textContent = `Welcome, ${currentUser.username}!`;
+            document.getElementById('userTotalActivities').textContent = currentUser.total_activities || 0;
+            document.getElementById('userDiscountBadge').textContent = (currentUser.discount_percentage || 0).toFixed(2) + '%';
             
             // Check if user has parked car
-            const parkedSlot = slots.find(s => s.status === 'occupied' && s.active_session && (s.active_session.owner.toLowerCase().includes(currentUser.name.toLowerCase()) || s.active_session.owner.toLowerCase().includes(currentUser.username.toLowerCase())));
+            const parkedSlot = slots.find(s => s.status === 'occupied' && s.active_session && (s.active_session.owner.toLowerCase() === currentUser.username.toLowerCase() || (currentUser.license_plate && s.active_session.plate === currentUser.license_plate)));
             const sessionCard = document.getElementById('userActiveSessionCard');
             const sessionBody = document.getElementById('userActiveSessionBody');
 
@@ -1476,17 +1375,40 @@
                 const lot = lots.find(l => l.id === parkedSlot.lot_id);
                 sessionCard.style.display = 'block';
                 sessionBody.innerHTML = `
-                    <h5 class="card-title text-success">You are parked!</h5>
+                    <h5 class="card-title">You are parked!</h5>
                     <p class="card-text">
                         <strong>Lot:</strong> ${lot.name}<br>
                         <strong>Slot:</strong> ${parkedSlot.slot_number}<br>
                         <strong>Vehicle:</strong> ${parkedSlot.active_session.plate}<br>
-                        <strong>Check-In Time:</strong> ${new Date(parkedSlot.active_session.check_in_time).toLocaleTimeString()}
+                        <strong>Check-In Time:</strong> ${new Date(parkedSlot.active_session.check_in_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </p>
-                    <button onclick="switchView('checkout')" class="btn btn-danger"><i class="fas fa-sign-out-alt me-1"></i> Check Out Now</button>
+                    <button onclick="switchView('checkout')" class="btn btn-danger">Check Out Now</button>
                 `;
             } else {
                 sessionCard.style.display = 'none';
+            }
+
+            // User reservations
+            const userRes = reservations.filter(r => r.owner.toLowerCase() === currentUser.username.toLowerCase());
+            const userResList = document.getElementById('userReservationsList');
+            userResList.innerHTML = '';
+            if (userRes.length > 0) {
+                userRes.forEach(r => {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item bg-dark text-white border-secondary mb-2 rounded';
+                    item.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-primary">Slot ${r.slot_number}</h5>
+                            <small class="text-muted">${r.lot_name}</small>
+                        </div>
+                        <p class="mb-1">Time: ${r.time}</p>
+                        <small class="text-muted">Vehicle: ${r.plate}</small>
+                        <button class="btn btn-success btn-sm float-end" onclick="alert('Direct Check-In confirmed for Reservation ${r.id}!')">Check In Now</button>
+                    `;
+                    userResList.appendChild(item);
+                });
+            } else {
+                userResList.innerHTML = `<p class="card-text text-muted mb-0">No active reservations found.</p>`;
             }
         }
 
@@ -1494,14 +1416,11 @@
         function refreshDashboardUI() {
             const total = slots.length;
             const occupied = slots.filter(s => s.status === 'occupied').length;
-            const available = slots.filter(s => s.status === 'available').length;
-            const rate = Math.round((occupied / total) * 100) || 0;
+            const percentage = total > 0 ? ((occupied / total) * 100).toFixed(2) : 0;
             const totalRev = history.reduce((acc, h) => acc + (h.fee || 0), 0);
 
-            document.getElementById('statAvailable').textContent = available;
-            document.getElementById('statOccupied').textContent = occupied;
-            document.getElementById('statRevenue').textContent = '৳' + totalRev.toLocaleString();
-            document.getElementById('statOccupancyRate').textContent = rate + '%';
+            document.getElementById('statRevenue').textContent = '৳' + totalRev.toFixed(2);
+            document.getElementById('statOccupancyText').textContent = `${occupied} / ${total} slots (${percentage}%)`;
 
             // Area Filter Pills
             const pillsContainer = document.getElementById('areaFilterPills');
@@ -1594,11 +1513,11 @@
                 opt.textContent = `${lot.name} (${lot.area} - ৳${lot.hourly_rate}/hr)`;
                 selector.appendChild(opt);
             });
-            if (currentUser && currentUser.name) {
-                document.getElementById('checkInOwner').value = currentUser.name;
-            }
-            if (currentUser && currentUser.plate) {
-                document.getElementById('checkInPlate').value = currentUser.plate;
+            if (currentUser) {
+                document.getElementById('checkInOwner').value = currentUser.username;
+                if (currentUser.license_plate) {
+                    document.getElementById('checkInPlate').value = currentUser.license_plate;
+                }
             }
             renderCheckInSlotPicker();
         }
@@ -1768,6 +1687,14 @@
                 status: `Paid (${method})`
             });
 
+            // Increment user checkouts if match
+            const userMatch = users.find(u => u.username.toLowerCase() === session.owner.toLowerCase());
+            if (userMatch) {
+                userMatch.total_activities = (userMatch.total_activities || 0) + 1;
+                if (userMatch.total_activities >= 10) userMatch.discount_percentage = 10.0;
+                else if (userMatch.total_activities >= 5) userMatch.discount_percentage = 5.0;
+            }
+
             // Free slot
             slot.status = "available";
             slot.active_session = null;
@@ -1812,7 +1739,7 @@
         function openNewReservationModal() {
             const plate = prompt("Enter Vehicle Plate (e.g. DHK-METRO-GA-9922):");
             if (!plate) return;
-            const name = prompt("Enter Driver / Customer Name:") || (currentUser ? currentUser.name : "Valued Customer");
+            const name = prompt("Enter Driver / Customer Name:") || (currentUser ? currentUser.username : "Driver");
             const area = prompt("Choose Area (Gulshan / Banani / Dhanmondi / Uttara):") || "Gulshan";
             
             const newRes = {
@@ -1881,12 +1808,12 @@
 
             // Top Users
             const userTbody = document.getElementById('topUsersTableBody');
-            userTbody.innerHTML = `
-                <tr><td>1</td><td><strong>Rahim Ahmed</strong></td><td>Sedan (Car)</td><td>14</td><td class="text-success">৳1,650</td></tr>
-                <tr><td>2</td><td><strong>Sadia Karim</strong></td><td>SUV</td><td>11</td><td class="text-success">৳1,420</td></tr>
-                <tr><td>3</td><td><strong>Tanvir Hossain</strong></td><td>Sedan</td><td>8</td><td class="text-success">৳950</td></tr>
-                <tr><td>4</td><td><strong>Nabil Hasan</strong></td><td>Bike</td><td>7</td><td class="text-success">৳420</td></tr>
-            `;
+            userTbody.innerHTML = '';
+            users.forEach((u, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${idx+1}</td><td><strong>${u.username}</strong></td><td>${u.license_plate || 'Standard'}</td><td>${u.total_activities || 1}</td><td class="text-success">৳${((u.total_activities || 1) * 120).toFixed(2)}</td>`;
+                userTbody.appendChild(tr);
+            });
 
             // Chart.js: Peak Hours
             const ctxPeak = document.getElementById('peakHoursChart').getContext('2d');
@@ -1942,39 +1869,14 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>#USR-${u.id}</strong></td>
-                    <td>${u.name}</td>
                     <td class="font-monospace text-info">${u.username}</td>
                     <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-primary'}">${u.role}</span></td>
-                    <td><span class="badge bg-success">${u.status}</span></td>
-                    <td>${u.date}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-light me-1" onclick="alert('User #${u.id} updated')"><i class="fas fa-edit"></i></button>
-                    </td>
+                    <td>${u.license_plate || '<span class="text-muted">None</span>'}</td>
+                    <td>${u.total_activities || 0}</td>
+                    <td><span class="badge bg-success">${(u.discount_percentage || 0).toFixed(2)}%</span></td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function openNewUserModal() {
-            const name = prompt("Enter Full Name:");
-            if (!name) return;
-            const uname = prompt("Enter Username:") || name.toLowerCase().replace(/\s+/g, '');
-            const pass = prompt("Enter Password:") || "1234";
-            const role = prompt("Enter Role (customer / admin):") || "customer";
-            users.push({
-                id: users.length + 1,
-                name: name,
-                username: uname,
-                password: pass,
-                role: role,
-                status: "Active",
-                date: new Date().toISOString().split('T')[0],
-                total_activities: 0,
-                discount_percentage: 0
-            });
-            saveAll();
-            renderUsersTable();
-            alert(`User @${uname} created!`);
         }
 
         // --- 13. FEEDBACK ---
@@ -1999,7 +1901,7 @@
 
         function handleFeedbackSubmit(e) {
             e.preventDefault();
-            const author = document.getElementById('feedbackAuthor').value.trim();
+            const author = currentUser ? currentUser.username : "Anonymous";
             const rating = parseInt(document.getElementById('feedbackRating').value);
             const comment = document.getElementById('feedbackComment').value.trim();
 
@@ -2012,7 +1914,7 @@
             saveAll();
             renderFeedbackList();
             document.getElementById('feedbackForm').reset();
-            alert("Thank you! Your feedback has been recorded.");
+            flashMessage('Thank you! Your feedback has been submitted.', 'success');
         }
 
         // Initial Load
